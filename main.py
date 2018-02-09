@@ -1,4 +1,5 @@
 import discord
+from discord.ext import commands
 import json
 import sys
 import asyncio
@@ -27,4 +28,22 @@ async def on_ready():
     print("-----------------")
 
 
-#@bot.event
+@bot.event
+async def on_message(message):
+    data = 0;
+    if message.content.lower().find("!lastmessage"): # !lastmessage <user> <number-of-messages-to-save>
+        if message.content.lower().find("fouric"):
+            user = "fouric"
+        if message.content.lower().find("gector"):
+            user = "gector"
+        if message.content.lower().find("Jay"):
+            user = "Jay"
+        if message.content.lower().find("thallia"):
+            user = "thallia"
+        if message.content.lower().find("uelen"):
+            user = "uelen"
+        if message.content.lower().find("galois"):
+            user = "galois"
+    with open(path + user + ".txt")
+
+
