@@ -1,0 +1,2 @@
+# scratchy
+scratchpad discord bot
