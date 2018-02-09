@@ -52,8 +52,8 @@ async def on_message(message):
         elif message.content.lower().find("galois") !=-1:
             user = "galois"
    # await bot.send_message(message.channel, user)
-    with open(path + user + ".txt") as file:
-        file.write(user, "w")
-        print("it worked")
+    with open(path + message.author.name.lower() + ".txt", 'w') as file:
+        file.write(user) ## this does not work when the await bot.send command is up
+    await bot.send_message(message.channel, "Saved to your scratchpad!")
 
 bot.run(token)
