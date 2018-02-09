@@ -13,6 +13,7 @@ commands = [      # created just so I know what commands we have so far/commands
     "!lastmessage"
     "!set"
     "!add"
+    "!test"
 ]
 
 with open(file_token, 'r') as file:      # *takes all of gector's code*
@@ -31,19 +32,28 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     data = 0;
-    if message.content.lower().find("!lastmessage"): # !lastmessage <user> <number-of-messages-to-save>
-        if message.content.lower().find("fouric"):
+    user = "test"
+    if message.content.lower().find("!test") !=-1:
+        name = str(message.author)
+        await bot.send_message(message.channel, "Hi, " + name)
+
+    #if message.content.lower().find("!lastmessage"): # !lastmessage <user> <number-of-messages-to-save>
+    if message.content.startswith('!lastmessage'):
+        if message.content.lower().find("fouric") !=-1:
             user = "fouric"
-        if message.content.lower().find("gector"):
+        elif message.content.lower().find("gector") !=-1:
             user = "gector"
-        if message.content.lower().find("Jay"):
+        elif message.content.lower().find("Jay") !=-1:
             user = "Jay"
-        if message.content.lower().find("thallia"):
+        elif message.content.lower().find("thallia") !=-1:
             user = "thallia"
-        if message.content.lower().find("uelen"):
+        elif message.content.lower().find("uelen") !=-1:
             user = "uelen"
-        if message.content.lower().find("galois"):
+        elif message.content.lower().find("galois") !=-1:
             user = "galois"
-    with open(path + user + ".txt")
+   # await bot.send_message(message.channel, user)
+    with open(path + user + ".txt") as file:
+        file.write(user, "w")
+        print("it worked")
 
-
+bot.run(token)
