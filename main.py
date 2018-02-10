@@ -22,7 +22,7 @@ print("Bot token: " + token)
 
 bot = discord.Client()
 
-@bot.event  # ?
+@bot.event  # must confirm the connection when it's done connecting
 async def on_ready():
     print("Connected!")
     print("Username: " + bot.user.name)
@@ -33,6 +33,7 @@ async def on_ready():
 async def on_message(message):
     data = 0;
     user = ""
+    counter = 1
     if message.content.lower().find("!test") !=-1:
         name = str(message.author)
         await bot.send_message(message.channel, "Hi, " + name)
@@ -51,15 +52,16 @@ async def on_message(message):
             user = "uelen"
         elif message.content.lower().find("galois") !=-1:
             user = "galois"
-   # await bot.send_message(message.channel, user)
-    with open(path + message.author.name.lower() + ".txt", 'w') as file: # opens user scratchpad
-        file.write(user) # writes the name you inputted
-        if message.author.name != bot.user.name: # makes sure scratchy doesn't trigger himself
-            await bot.send_message(message.channel, "Saved to your scratchpad!") # confirms it worked
+        with open(path + message.author.name.lower() + ".txt", 'w') as file: # opens user scratchpad
+            file.write(user)
+        ### need to get the file.write to write the number of messages you want to copy and put in the scratchpad. ###
+        ### 1) read in last 50 messages
+        ### 2) identify how many messages it should copy
+        ### 3) copy the messages with file.write into scratchpad
+            if message.author.name != bot.user.name: # makes sure scratchy doesn't trigger himself
+                await bot.send_message(message.channel, "Saved to your scratchpad!") # confirms it worked
 
-    ## This *works*, but it triggers every time someone says something.
-    ## then it resets your scratchpad to an empty file if you have any input after lastmessage that's anything other than a username
-
-
+        ### 4) don't save to scratchpad every time someone inputs -- done ###
+        ### 5) don't reset the scratchpad, indent and add onto
 
 bot.run(token)
