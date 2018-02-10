@@ -32,7 +32,7 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     data = 0;
-    user = "test"
+    user = ""
     if message.content.lower().find("!test") !=-1:
         name = str(message.author)
         await bot.send_message(message.channel, "Hi, " + name)
@@ -52,8 +52,14 @@ async def on_message(message):
         elif message.content.lower().find("galois") !=-1:
             user = "galois"
    # await bot.send_message(message.channel, user)
-    with open(path + message.author.name.lower() + ".txt", 'w') as file:
-        file.write(user) ## this does not work when the await bot.send command is up
-    await bot.send_message(message.channel, "Saved to your scratchpad!")
+    with open(path + message.author.name.lower() + ".txt", 'w') as file: # opens user scratchpad
+        file.write(user) # writes the name you inputted
+        if message.author.name != bot.user.name: # makes sure scratchy doesn't trigger himself
+            await bot.send_message(message.channel, "Saved to your scratchpad!") # confirms it worked
+
+    ## This *works*, but it triggers every time someone says something.
+    ## then it resets your scratchpad to an empty file if you have any input after lastmessage that's anything other than a username
+
+
 
 bot.run(token)
