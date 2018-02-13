@@ -17,7 +17,21 @@
             "Food is good."
         ]
     },
-   "messages": [
-	"None."
-   ]
+    "messages": [
+        "k",
+        "now it should be good",
+        "this is pretty hodge-podged together btw",
+        "proof of concept",
+        "@lastmessage gector",
+        "oh that's odd",
+        "oh derp",
+        "forgot \"add\"",
+        "@add",
+        "test",
+        "testing to see if it adds stuff",
+        "@add",
+        "@add",
+        "@add",
+        "None."
+    ]
 }

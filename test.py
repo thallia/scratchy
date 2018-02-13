@@ -5,13 +5,15 @@ import sys
 data1 = {
 	'title': "Scratchy",
 	"desc": "Discord bot for managing user scratchpads",
-	"values": ["It's awesome.", "Hello, world!", "Food is good."]
+	"values": ["It's awesome.", "
+		Hello, world!", 
+		"Food is good."]
 }
 
 data2 = {
 	'title': "EET-139 notes",
 	"desc": "Some notes from the worst class ever.",
-	"values": ["He draws LEDs with circles around them and the arrows pointing up.", 
+	"values": ["He drew stuff.", 
 		"Textbook is horrible.",
 		"Food is good."]
 }
