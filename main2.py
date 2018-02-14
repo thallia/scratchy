@@ -53,15 +53,14 @@ async def on_message(message):
         #await bot.send_message(message.channel, "derp")
 
     print("adding: " + message.content)
-    users[message.author.name.lower()].insert(0, message.content)
+    #users["document"].insert(0, message.content)
 
-    if message.content.startswith(prefix + "lastmessage"): # checks for the trigger command
+    if message.content.startswith(prefix + "grab"): # checks for the trigger command
         user = ioMod.json_handler
         data = user.read_user(0, author)
-        #users[message.author.name.lower()].insert(0, message.content)
-        for msg in users[message.author.name.lower()]:      # for the object in that user's file....
-            data["messages"].insert(0, msg)                 # inserts the message into the file
-            user.write(0, data, author + ".json") # writes the file
+        #if msg in users[message.author.name.lower()]:      # for the object in that user's file....
+        data["messages"].insert(0, message.content)                 # inserts the message into the file
+        user.write(0, data, author + ".json") # writes the file
         await bot.send_message(message.channel, "written to " + author + "'s scratchpad!")
 
 bot.run(token)
