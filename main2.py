@@ -4,11 +4,15 @@ import json
 import sys
 import asyncio
 import ioMod
+import os
 from collections import deque
 
 description = "scratchpad bot"
 path = "/home/thallia/code/scratchy/"
 file_token = "/home/thallia/key/scratchy-discord-token.txt"
+if os.getcwd().find("gector"):
+    file_token = "/home/gector/key.txt"
+
 token = ""
 
 commands = [       # created just so I know what commands we have so far/commands we want to integrate
@@ -56,6 +60,37 @@ async def on_message(message):
 
     print("adding: " + message.content)
     #users["document"].insert(0, message.content)
+    if message.content.startswith(prefix + "show"):
+        data = None;
+        handler = ioMod.json_handler()
+        try:
+            data = handler.read_user(message.author.name.lower())
+        except Exception as e:
+            print("ERROR: Failed to read user '{}', does their file exist?".format(message.author.name.lower()))
+            await bot.send_message(message.channel, e)
+            return;
+        
+
+        for field in data.values():
+            #await bot.send_message(message.channel, field)
+            fill_me = "```"
+            if type(field) == list or type(field) == dict:
+                for element in field:
+                    indent = ''
+                    value = field[element]
+                    if type(value) == str:
+                        fill_me += element + ": " + value + "\n"
+                    elif type(value) == list:
+                        indent = 6*' '
+                        fill_me += element + ": " + "\n" + indent
+                        for x in range(0, 9):
+                            try:
+                                fill_me += "({}) ".format(x) + "\"" + value[x] + "\"\n" + indent
+                            except Exception as e:
+                                print("")
+            await bot.send_message(message.channel, fill_me + "```") 
+                    
+
 
     if message.content.startswith(prefix + "grab"): # checks for the trigger command
         user = ioMod.json_handler
