@@ -1,10 +1,6 @@
 {
     "messages": [
-        "@grab",
-        false,
-        "@grab",
-        "@grab",
-        "@grab",
-        "@grab"
+        "work",
+        "THIS MESSAGE"
     ]
 }

@@ -4,6 +4,7 @@ import json
 import sys
 import asyncio
 import ioMod
+from collections import deque
 
 description = "scratchpad bot"
 path = "/home/thallia/code/scratchy/"
@@ -45,12 +46,13 @@ async def on_message(message):
     user = ioMod.json_handler()
     prefix = "@"
     author = message.author.name.lower()
+    messages = bot.messages
 
     if message.author.name.lower() == "scratchy":   # prevents triggering of self
         return
 
     #if message.content.startswith(prefix + " test") !=-1:
-        #await bot.send_message(message.channel, "derp")
+    #await bot.send_message(message.channel, "derp")
 
     print("adding: " + message.content)
     #users["document"].insert(0, message.content)
@@ -58,9 +60,16 @@ async def on_message(message):
     if message.content.startswith(prefix + "grab"): # checks for the trigger command
         user = ioMod.json_handler
         data = user.read_user(0, author)
-        #if msg in users[message.author.name.lower()]:      # for the object in that user's file....
-        data["messages"].insert(0, message.content)                 # inserts the message into the file
-        user.write(0, data, author + ".json") # writes the file
+        #messages.reverse()
+        messages.rotate(1)
+        usermessage = messages.pop()
+        if users[message.author.name.lower()] !=-1: # for the object in that user's file....
+            data["messages"].insert(0, usermessage.content) # inserts the message into the file
+            user.write(0, data, author + ".json") # writes the file
         await bot.send_message(message.channel, "written to " + author + "'s scratchpad!")
+
+    #messages = bot.messages
+    #test = messages.pop()
+    #print(test.content)
 
 bot.run(token)
