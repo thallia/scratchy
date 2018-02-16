@@ -1,0 +1,8 @@
+{
+
+    all_commands = {1:"grab", 2:"read", 3:"pin", 4:"show", 5:"use", 6:"add", 7:"new", 8:"grab"}
+
+    grab = {"command":"GRAB", "syntax":"@scratchy grab (optional) <number> <user> <title>", "description":"Grab is a command that will allow you to grab the last message and stick it in your scratchpad. You can execute it with parameters to organize it with a title, a description, and the actual messages. You can also execute it by itself, which will stick it in a default list until you have the time to organize it.\n\n @scratchy grab == sticks the last message into a default list \n\n Parameters: \n \n <number> == scans the chat for however many messages you want to copy \n \n <user> == copies messages from the specific user that you specify \n \n <title> == the title of the messages you're copying (e.g. verilog, programming, links, math) "};
+
+    add = {"command":"add", "syntax":"", "description":""}
+}

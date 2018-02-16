@@ -55,7 +55,6 @@ async def on_message(message):
     #await bot.send_message(message.channel, "derp")
 
     print("adding: " + message.content)
-    #users["document"].insert(0, message.content)
 
     if message.content.startswith(prefix + "grab"): # checks for the trigger command
         user = ioMod.json_handler
