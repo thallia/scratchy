@@ -23,3 +23,10 @@ data_to_json = {
 ioMod.test("Hello, World!")
 test = ioMod.read_json("data.json")
 ioMod.write_json(data_to_json, "data2.json")
+'''
+class help_meh():
+    def __init__ (self):
+        with open('help.json') as json_data:
+            self.h = json.load(json_data)
+            print(h)
+'''
