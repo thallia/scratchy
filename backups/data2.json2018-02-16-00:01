@@ -1,0 +1,20 @@
+{
+    "scratchy": {
+        "title": "Scratchy",
+        "desc": "Discord bot for managing user scratchpads",
+        "values": [
+            "It's awesome.",
+            "Hello, world!",
+            "Food is good."
+        ]
+    },
+    "eet139": {
+        "title": "EET-139 notes",
+        "desc": "Some notes from the worst class ever.",
+        "values": [
+            "He draws LEDs with circles around them and the arrows pointing up.",
+            "Textbook is horrible.",
+            "Food is good."
+        ]
+    }
+}
