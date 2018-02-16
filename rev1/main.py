@@ -9,11 +9,12 @@ path = "/home/thallia/code/scratchy/"
 file_token = "/home/thallia/key/scratchy-discord-token.txt"
 token = ""
 
-commands = [      # created just so I know what commands we have so far/commands we want to integrate
-    "!lastmessage"
+commands = [       # created just so I know what commands we have so far/commands we want to integrate
+    "!lastmessage" # for individual scratchpads
     "!set"
     "!add"
     "!test"
+    "!pin"         # for pinned messages on discord in a public file for anyone to access: should document the channel, who said it, and the message/link
 ]
 
 with open(file_token, 'r') as file:      # *takes all of gector's code*
@@ -52,8 +53,14 @@ async def on_message(message):
             user = "uelen"
         elif message.content.lower().find("galois") !=-1:
             user = "galois"
-        with open(path + message.author.name.lower() + ".txt", 'w') as file: # opens user scratchpad
+        await bot.send_message(message.channel, "How many messages do you want to copy from " + user + "?") # asks how many messages you want to copy from the user you specified
+        #if await bot.wait_for_message(author=message.author, content="1") !=-1:
+          #  msgs = 1
+
+        with open(path + message.author.name.lower() + ".txt", 'a') as file: # opens user scratchpad
             file.write(user)
+
+
         ### need to get the file.write to write the number of messages you want to copy and put in the scratchpad. ###
         ### 1) read in last 50 messages
         ### 2) identify how many messages it should copy
@@ -61,7 +68,9 @@ async def on_message(message):
             if message.author.name != bot.user.name: # makes sure scratchy doesn't trigger himself
                 await bot.send_message(message.channel, "Saved to your scratchpad!") # confirms it worked
 
-        ### 4) don't save to scratchpad every time someone inputs -- done ###
-        ### 5) don't reset the scratchpad, indent and add onto
+
+                #############################################^thallia's portion^###################################################################
+
+    
 
 bot.run(token)
