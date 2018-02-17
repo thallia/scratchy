@@ -53,7 +53,7 @@ class json_handler():
     def read(self, fp):
         if not os.path.isfile(fp): 
             print("ERROR: ioMod: '" + user.lower() + ".json' doesn't exist.")
-            return;
+            return None;
 
         with open(fp) as json_file:
     	    return json.load(json_file)
@@ -61,7 +61,7 @@ class json_handler():
     def read_user(self, fp):
         if not os.path.isfile(fp + ".json"):
             print("ERROR: ioMod: '" + user.lower() + ".json' doesn't exist.")
-            return;
+            return None;
 
         with open(fp + ".json") as json_file:
     	    return json.load(json_file)

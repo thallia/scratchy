@@ -40,11 +40,9 @@ def find_quote(msg_list, index = 0):
 
 def show(data=None, subject = None):
     fill_me = ""
-    if subject != None and subject != []:
-        if set(subject).issubset(data):
-            data = {key:data[key] for key in subject}
-            print("Data: {}, \nSubject: {}".format(data, subject))
-            fill_me = ""
+    if subject != None and subject != "" and subject != " ":
+        if subject in data:
+            data = {key:data[key] for key in [subject]}
         else:
             return "Invalid request, subject not in file"
 
@@ -107,7 +105,7 @@ async def on_message(message):
         message_args = message.content.split(" ")
         arg1 = None
         try:
-            arg1 = message_args[1:]
+            arg1 = message_args[1].strip()
         except Exception as e:
             print("no argrument")
         
@@ -138,10 +136,6 @@ async def on_message(message):
         handler = ioMod.json_handler()
         try:
             data = handler.read_user(msg_author)
-            if data == None:
-                # new_file(user, fp = None)
-                handler.new_file(msg_author)
-                data = handler.read_user(msg_author)
     
             # new(user, entry_name):
             handler.new(msg_author, arg1)
@@ -186,7 +180,7 @@ async def on_message(message):
 
             await bot.send_message(msg_chan, "Success! Try `{}show {}` to display your new scratchpad entry".format(prefix, arg1))
         except Exception as e:
-            await bot.send_message(msg_chan, "Err: Unable to parse data. '{}'".format(e))
+            await bot.send_message(msg_chan, "{}".format(e))
             
         
     if message.content.startswith(prefix + "grab"): # checks for the trigger command

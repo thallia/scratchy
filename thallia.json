@@ -2,5 +2,12 @@
     "messages": [
         "work",
         "THIS MESSAGE"
-    ]
+    ],
+    "python": {
+        "title": "python",
+        "desc": "Python learnings, code, and tidbits",
+        "values": [
+            "python is gud"
+        ]
+    }
 }
