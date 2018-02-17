@@ -54,12 +54,12 @@ async def on_message(message):
     author = message.author.name.lower()
     messages = bot.messages
     helpmeh = help_meh()
+    title = ""
 
-   def write_the_dang_thing(): 
+    def write_the_dang_thing():
         if users[message.author.name.lower()] !=-1: # for the object in that user's file....
-            data["messages"].insert(0, usermessage.content) # inserts the message into the file
+            data[title].insert(0, usermessage.content) # inserts the message into the file
             user.write(0, data, author + ".json") # writes the file
-        await bot.send_message(message.channel, "written to " + author + "'s scratchpad!")
 
     if message.author.name.lower() == "scratchy":   # prevents triggering of self
         return
@@ -96,40 +96,89 @@ async def on_message(message):
     if message.content.startswith(prefix + "grab"): # checks for the trigger command
         user = ioMod.json_handler
         data = user.read_user(0, author)
+        arg1 = 0
+        arg2 = 0
+        arg3 = 0
+        rotate = 0
+        before_rotate = 0
+        messages_from = 0
+        messageargs = message.content.split(" ")
 
-        arg1 = none
-	    arg2 = none
-	    rotate = 0
-	    before_rotate = none
-	    messages_from = none
-	    messageargs = message.content.split(" ")
-	    try:
-	        arg1 = messageargs[1].strip()
-	        arg2 = messageargs[2].strip()
-	        if type(arg1) = int:
-		        before_rotate = arg1
-	        elif type(arg1) = str:
-		        before_rotate = 1
-		        messages_from = arg1
-	        if type(arg2) = int:
-		        before_rotate = arg2
-	        elif type(arg2) = str:
-		        messages_from = arg2
+        arg1 = messageargs[1].strip()
+        try:
+            arg2 = messageargs[2].strip()
+        except Exception:
+            pass
+        try:
+            arg3 = messageargs[3].strip()
+        except Exception:
+            pass
 
-	    except:
-	        rotate = 1
-	        messages_from = none
+        if before_rotate == 0:
+            try:
+                int(arg1)
+                rotate = int(arg1)
+            except Exception:
+                pass
+            try:
+                int(arg2)
+                rotate = int(arg2)
+            except Exception:
+                pass
+            try:
+                int(arg3)
+                rotate = int(arg3)
+            except Exception:
+                pass
+        try:
 
-        messages.rotate(rotate)
-        usermessage = messages.pop()
-	write_the_dang_thing()
-#nk, so we have the command that actully works. Now it needs to take input @grab <user> <number>
+            if type(arg1) is int:
+                rotate = arg1
+            elif type(arg1) is str:
+                if arg1 in users:
+                    messages_from = arg1
+                else:
+                    title = arg1
+            if type(arg2) is int:
+                rotate = arg2
+            elif type(arg2) is str:
+                if arg2 in users:
+                    messages_from = arg2
+                else:
+                    title = arg2
+            if type(arg3) is int:
+                rotate = arg3
+            elif type(arg3) is str:
+                if arg3 in users:
+                    messages_from = arg3
+                else:
+                    title = arg3
+        except Exception:
+            pass
 
-    #messages = bot.messages
-    #test = messages.pop()
-    #print(test.content)
+        print("argument 1: " + str(arg1))
+        print("argument 2: " + str(arg2))
+        print("argument 3: " + str(arg3))
 
-   if message.content.startswith(prefix + "help"):
+        print("rotate: " + str(rotate))
+        print("messages_from: " + str(messages_from))
+        print("title: " + str(title))
+
+        #if messages_from != none:
+            # needs to register if a username was provided, cycle through and only pick out those user messages
+        if rotate == 0:
+             rotate = 1
+        i = rotate
+        while i > 0:
+            messages.rotate(rotate)
+            usermessage = messages.pop()
+            write_the_dang_thing()
+            rotate = rotate * -1
+            i - 1
+            if i == 0:
+                await bot.send_message(message.channel, "written to " + author + "'s scratchpad!")
+
+    if message.content.startswith(prefix + "help"):
         await bot.send_message(message.channel, "What command would you like help with?")
         #if message.content.lower().find("grab") !=-1:
         print(helpmeh.with_grab())
