@@ -4,7 +4,6 @@
         "desc": "\"A bot for doing awesome stuff.\"",
         "values": [
             "test",
-            null,
             "\"I can do really cool stuff.\"",
             "JSON-based bot for recording cool stuff."
         ]
@@ -21,6 +20,20 @@
         "desc": "Stuff that has to do with project monolith.",
         "values": [
             "Fouric's brainchild."
+        ]
+    },
+    "linux_commands": {
+        "title": "linux_commands",
+        "desc": "",
+        "values": [
+            "nm will list symbols from object files",
+            "pdfunite combines multiple pdfs into one",
+            "watch grep -e Dirty: -e Writeback: /proc/meminfo will tell you how close your USB drive is to being able to be safely removed",
+            "sshfs will mount a remote directory as a local one through ssh",
+            "strace and ltrace log calls to system functions and libraries, respectively",
+            "xdotool can send keystrokes and mouse actions to a window",
+            "fbgrab will take a screenshot of a terminal",
+            "PSA: baobab is a really neat tool to graphically show disk usage on linux"
         ]
     }
 }

@@ -39,20 +39,22 @@ def find_quote(msg_list, index = 0):
                 return msg_list.index(x)
 
 def show(data=None, subject = None):
+    show_all = False;
     fill_me = ""
     if subject != None and subject != []:
         if set(subject).issubset(data):
             data = {key:data[key] for key in subject}
             print("Data: {}, \nSubject: {}".format(data, subject))
+            show_all = True;
             fill_me = ""
         else:
             return "Invalid request, subject not in file"
 
     for field in data.values():
         #await bot.send_message(message.channel, field)
-        fill_me += "```"
-        print(field)
-        if type(field) == list or type(field) == dict:
+        #print(field)
+        if type(field) == list or type(field) == dict and show_all:
+            fill_me += "```"
             for element in field:
                 indent = ''
                 value = field[element]
@@ -62,10 +64,17 @@ def show(data=None, subject = None):
                     indent = 6*' '
                     fill_me += element + ": " + "\n" + indent
                     for x in range(0, 9):
-                        try:
+                        if x < len(value) and value[x] != None:
                             fill_me += "({}) ".format(x) + "\"" + value[x] + "\"\n" + indent
-                        except Exception as e:
-                            print("")
+        elif show_all == False:
+            fill_me = "```\n"
+            for f in data.values():
+                if type(f) == dict:
+                    print(f['title'])
+                    fill_me += f['title'] + "\n"
+            fill_me += "```"
+            return fill_me
+
         fill_me += "```"
 
     return (fill_me)
@@ -119,6 +128,7 @@ async def on_message(message):
             print("ERROR: Failed to read user '{}', does their file exist?".format(message.author.name.lower()))
             await bot.send_message(message.channel, e)
             return;
+
         if arg1 != "" or arg1 != None:
             await bot.send_message(message.channel, show(data = data, subject = arg1))
         else: 
@@ -132,7 +142,7 @@ async def on_message(message):
             arg1 = str(message_args[1].strip())
         except Exception as e:
             await bot.send_message(msg_chan, "Err: Unable to parse args. Are you using `new <entry_name>`?") # Report error
-            await bot.send_message(msg_chan, "{}".format(e))
+            return
             
         data = None
         handler = ioMod.json_handler()
@@ -148,6 +158,7 @@ async def on_message(message):
             await bot.send_message(msg_chan, "Success! Try `{}show {}` to display your new scratchpad entry".format(prefix, arg1))
         except Exception as e:
             await bot.send_message(msg_chan, "{}".format(e))
+            return
     
     if msg_content.startswith(prefix + "set"):
         # set <entry> <field> <value>
@@ -171,6 +182,7 @@ async def on_message(message):
             print(arg3)
         except Exception as e:
             await bot.send_message(msg_chan, "Err: Unable to parse args. Are you using `set <entry_name> <field_name> <value>`?") # Report error
+            return
         
         data = None
         handler = ioMod.json_handler()
@@ -187,8 +199,16 @@ async def on_message(message):
             await bot.send_message(msg_chan, "Success! Try `{}show {}` to display your new scratchpad entry".format(prefix, arg1))
         except Exception as e:
             await bot.send_message(msg_chan, "Err: Unable to parse data. '{}'".format(e))
+            return
             
         
+    if msg_content.startswith(prefix + "upload_scratch"):
+        if os.path.isfile(msg_author + ".json"):
+            await bot.send_message(msg_chan, "Uploading your scratchpad...")
+            await bot.send_file(msg_chan, os.getcwd() + "/" + msg_author + ".json")
+        else:
+            await bot.send_message(msg_chan, "Err: Unable to upload file, check to make sure it exists.")
+            
     if message.content.startswith(prefix + "grab"): # checks for the trigger command
         user = ioMod.json_handler
         data = user.read_user(0, author)
