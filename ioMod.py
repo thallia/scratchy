@@ -12,21 +12,74 @@ class json_handler():
     ## Demonstrate using self values in other places
     def foo_method(self, bar):
     	print(self.foo + bar)
+    
+    def new(self, user, entry_name):
+        data_to_init = {
+            "title": entry_name,
+            "desc": "",
+            "values": []
+        }
+        
+        if os.path.isfile(user.lower() + ".json"): 
+            data = None
+            with open(user.lower() + ".json", "r") as json_file:
+                data = json.load(json_file)
+                if entry_name not in data:
+                    data[entry_name] = data_to_init
+                else:
+                    print("ERROR: ioMod: '" + entry_name + "' already in file")
 
+            with open(user.lower() + ".json", "w") as json_file:
+                if data != None:
+                    json.dump(data, json_file, indent=4)            
+        else:
+            print("ERROR: ioMod: '" + entry_name + "' file doesn't exist") 
+ 
+    def new_file(self, user, fp = None):
+        
+        data_to_init = {
+            "messages": [],
+        }
+
+        if fp == None and not os.path.isfile(user.lower() + ".json"): # if not a special file and if file does not exist
+            with open(user.lower() + ".json", "w+") as json_file:
+                json.dump(data_to_init, json_file, indent=4)
+                print("populated " + user.lower() + ".json")
+        else:
+            print("ERROR: ioMod: '" + user.lower() + ".json' already exists")
+
+
+            
     def read(self, fp):
-    	with open(fp) as json_file:
-    		return json.load(json_file)
+        if not os.path.isfile(fp): 
+            print("ERROR: ioMod: '" + user.lower() + ".json' doesn't exist.")
+            return;
+
+        with open(fp) as json_file:
+    	    return json.load(json_file)
     
     def read_user(self, fp):
-    	with open(fp + ".json") as json_file:
-    		return json.load(json_file)
+        if not os.path.isfile(fp + ".json"):
+            print("ERROR: ioMod: '" + user.lower() + ".json' doesn't exist.")
+            return;
 
-    def write(self, obj, fb):	
-    	with open(fb, 'w') as json_file:
-    		return json.dump(obj, json_file, indent=4)
+        with open(fp + ".json") as json_file:
+    	    return json.load(json_file)
+
+    def write(self, obj, fp):
+        if not os.path.isfile(fp): 
+            print("ERROR: ioMod: '" + user.lower() + ".json' doesn't exist.")
+            return;
+
+        with open(fp, 'w') as json_file:
+    	    return json.dump(obj, json_file, indent=4)
 	
-    def write_user(self, obj, fb):	
-    	with open(fb + ".json", 'w') as json_file:
+    def write_user(self, obj, fp):
+        if not os.path.isfile(fp + ".json"):
+            print("ERROR: ioMod: '" + user.lower() + ".json' doesn't exist.")
+            return;
+	
+        with open(fp + ".json", 'w') as json_file:
     	    return json.dump(obj, json_file, indent=4)
 
     def make_backup(self, files=None):
@@ -68,6 +121,8 @@ if __name__ == "__main__":
     handle = json_handler()
     handle.foo_method(" world!");
     #handle.make_backup()
+    handle.new_file("fouric")
+    handle.new("fouric", "test")
     print("I'me at: " + handle.path_to_me)
 	
 
