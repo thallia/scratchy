@@ -6,12 +6,13 @@ import asyncio
 import ioMod
 import os
 from collections import deque
+import helpMeh
 
 description = "scratchpad bot"
 path = "/home/thallia/code/scratchy/"
 file_token = "/home/thallia/key/scratchy-discord-token.txt"
-if os.getcwd().find("gector"):
-    file_token = "/home/gector/key.txt"
+#if os.getcwd().find("gector"):
+    #file_token = "/home/gector/key.txt"
 
 token = ""
 
@@ -61,6 +62,7 @@ async def on_message(message):
     print("adding: " + message.content)
 
     #users["document"].insert(0, message.content)
+
     if message.content.startswith(prefix + "show"):
         data = None;
         handler = ioMod.json_handler()
@@ -70,7 +72,6 @@ async def on_message(message):
             print("ERROR: Failed to read user '{}', does their file exist?".format(message.author.name.lower()))
             await bot.send_message(message.channel, e)
             return;
-        
 
         for field in data.values():
             #await bot.send_message(message.channel, field)
@@ -107,5 +108,10 @@ async def on_message(message):
     #messages = bot.messages
     #test = messages.pop()
     #print(test.content)
+
+    if message.content.startswith(prefix + "help"):
+        await bot.send_message(message.channel, "What command would you like help with?")
+        if message.content.lower().find("grab") !=-1:
+            help_meh.with_grab()
 
 bot.run(token)
