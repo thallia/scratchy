@@ -108,14 +108,14 @@ async def on_message(message):
         try:
             if type(arg1) is int:
                 rotate = arg1
-	    elif type(arg1) is str:
+	        elif type(arg1) is str:
                	if arg1 in users:
               		messages_from = arg1
                 else:
                     title = arg1
             elif type(arg2) is int:
                 rotate = arg2
-	    elif type(arg2) is str:
+	        elif type(arg2) is str:
                 if arg2 in users:
                     messages_from = arg2
                 else:
