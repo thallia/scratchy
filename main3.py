@@ -32,9 +32,14 @@ users = {
     "galois": []
 }
 
+def find_quote(msg_list):
+        for x in msg_list:
+            if x.find('"') != -1:
+                return msg_list.index(x)
+
 def show(data=None, subject = None):
     fill_me = ""
-    if subject != None:
+    if subject != None and subject != "" and subject != " ":
         if subject in data:
             data = {key:data[key] for key in [subject]}
         else:
@@ -42,8 +47,9 @@ def show(data=None, subject = None):
 
     for field in data.values():
         #await bot.send_message(message.channel, field)
+        fill_me += "```"
+        print(field)
         if type(field) == list or type(field) == dict:
-            fill_me += "```"
             for element in field:
                 indent = ''
                 value = field[element]
@@ -80,8 +86,12 @@ async def on_message(message):
     prefix = "@"
     author = message.author.name.lower()
     messages = bot.messages
+    
+    msg_content = message.content
+    msg_author = message.author.name.lower()
+    msg_chan = message.channel
 
-    if message.author.name.lower() == "scratchy":   # prevents triggering of self
+    if msg_author == "scratchy":   # prevents triggering of self
         return
 
     #if message.content.startswith(prefix + " test") !=-1:
@@ -110,7 +120,60 @@ async def on_message(message):
             await bot.send_message(message.channel, show(data = data, subject = arg1))
         else: 
             await bot.send_message(message.channel, show(data = data))
-                    
+    
+    if msg_content.startswith(prefix + "new"):
+        message_args = msg_content.split(" ")
+        arg1 = None
+        
+        try:
+            arg1 = str(message_args[1].strip())
+        except Exception as e:
+            await bot.send_message(msg_chan, "Err: Unable to parse args. Are you using `new <entry_name>`?") # Report error
+            await bot.send_message(msg_chan, "{}".format(e))
+            
+        data = None
+        handler = ioMod.json_handler()
+        try:
+            data = handler.read_user(msg_author)
+    
+            # new(user, entry_name):
+            handler.new(msg_author, arg1)
+            await bot.send_message(msg_chan, "Success! Try `{}show {}` to display your new scratchpad entry".format(prefix, arg1))
+        except Exception as e:
+            await bot.send_message(msg_chan, "{}".format(e))
+    
+    if msg_content.startswith(prefix + "set"):
+        # set <entry> <field> <value>
+        message_args = msg_content.split(" ")
+        arg1, arg2, arg3 = None, None, None # Way of assignming multiple variables at once.
+        
+        try:
+            arg1 = str(message_args[1].strip()) # entry
+            arg2 = str(message_args[2].strip()) # field
+            
+            index1 = find_quote(message_args)
+            index2 = find_quote(message_args[index1+1:])
+            print("Index1: {}, index2: {}".format(index1, index2))
+            if index1 == index2:
+                raise "bad value formatting."
+
+            arg3 = ''.join(message_args[index1:index2])
+        except Exception as e:
+            await bot.send_message(msg_chan, "Err: Unable to parse args. Are you using `set <entry_name> <field_name> <value>`?") # Report error
+            await bot.send_message(msg_chan, "{}".format(e))
+        
+        data = None
+        handler = ioMod.json_handler()
+        try:
+            data = handler.read_user(msg_author)
+            data[arg1][arg2] = arg3
+            # write_user(obj, user)
+            handler.write_user(data, msg_author)
+            await bot.send_message(msg_chan, "Success! Try `{}show {}` to display your new scratchpad entry".format(prefix, arg1))
+        except Exception as e:
+            await bot.send_message(msg_chan, "{}".format(e))
+            
+        
     if message.content.startswith(prefix + "grab"): # checks for the trigger command
         user = ioMod.json_handler
         data = user.read_user(0, author)
@@ -121,7 +184,7 @@ async def on_message(message):
             data["messages"].insert(0, usermessage.content) # inserts the message into the file
             user.write(0, data, author + ".json") # writes the file
         await bot.send_message(message.channel, "written to " + author + "'s scratchpad!")
-
+    
     #messages = bot.messages
     #test = messages.pop()
     #print(test.content)

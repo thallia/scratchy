@@ -15,11 +15,9 @@ class json_handler():
     
     def new(self, user, entry_name):
         data_to_init = {
-            entry_name: {
-                "title": "",
-                "desc": "",
-                "values": []
-            }
+            "title": entry_name,
+            "desc": "",
+            "values": []
         }
         
         if os.path.isfile(user.lower() + ".json"): 
@@ -53,7 +51,7 @@ class json_handler():
 
             
     def read(self, fp):
-        if not os.path.isfile(fb): 
+        if not os.path.isfile(fp): 
             print("ERROR: ioMod: '" + user.lower() + ".json' doesn't exist.")
             return;
 
@@ -61,27 +59,27 @@ class json_handler():
     	    return json.load(json_file)
     
     def read_user(self, fp):
-        if not os.path.isfile(fb + ".json"):
+        if not os.path.isfile(fp + ".json"):
             print("ERROR: ioMod: '" + user.lower() + ".json' doesn't exist.")
             return;
 
         with open(fp + ".json") as json_file:
     	    return json.load(json_file)
 
-    def write(self, obj, fb):
-        if not os.path.isfile(fb): 
+    def write(self, obj, fp):
+        if not os.path.isfile(fp): 
             print("ERROR: ioMod: '" + user.lower() + ".json' doesn't exist.")
             return;
 
-        with open(fb, 'w') as json_file:
+        with open(fp, 'w') as json_file:
     	    return json.dump(obj, json_file, indent=4)
 	
-    def write_user(self, obj, fb):
-        if not os.path.isfile(fb + ".json"):
+    def write_user(self, obj, fp):
+        if not os.path.isfile(fp + ".json"):
             print("ERROR: ioMod: '" + user.lower() + ".json' doesn't exist.")
             return;
 	
-        with open(fb + ".json", 'w') as json_file:
+        with open(fp + ".json", 'w') as json_file:
     	    return json.dump(obj, json_file, indent=4)
 
     def make_backup(self, files=None):

@@ -1,16 +1,16 @@
 {
     "scratchy": {
         "title": "scratchy",
-        "desc": "Bot.",
+        "desc": "\"Some",
         "values": [
-		"JSON-based bot for recording cool stuff."
-	]
+            "JSON-based bot for recording cool stuff."
+        ]
     },
     "lolbot": {
         "title": "lolbot",
         "desc": "Bot (better bot).",
         "values": [
-		"Funny bot that collects funnies and puts them in a funny jar (lol)."
-	]
+            "Funny bot that collects funnies and puts them in a funny jar (lol)."
+        ]
     }
 }
