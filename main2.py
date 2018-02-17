@@ -7,6 +7,7 @@ import ioMod
 import os
 from collections import deque
 import helpMeh
+from helpMeh import help_meh
 
 description = "scratchpad bot"
 path = "/home/thallia/code/scratchy/"
@@ -52,6 +53,7 @@ async def on_message(message):
     prefix = "@"
     author = message.author.name.lower()
     messages = bot.messages
+    helpmeh = help_meh()
 
    def write_the_dang_thing(): 
         if users[message.author.name.lower()] !=-1: # for the object in that user's file....
@@ -61,13 +63,6 @@ async def on_message(message):
 
     if message.author.name.lower() == "scratchy":   # prevents triggering of self
         return
-
-    #if message.content.startswith(prefix + " test") !=-1:
-    #await bot.send_message(message.channel, "derp")
-
-    print("adding: " + message.content)
-
-    #users["document"].insert(0, message.content)
 
     if message.content.startswith(prefix + "show"):
         data = None;
@@ -97,42 +92,38 @@ async def on_message(message):
                             except Exception as e:
                                 print("")
             await bot.send_message(message.channel, fill_me + "```") 
-                    
-
 
     if message.content.startswith(prefix + "grab"): # checks for the trigger command
         user = ioMod.json_handler
         data = user.read_user(0, author)
-	arg1 = none
-	arg2 = none
-	rotate = 0
-	before_rotate = none
-	messages_from = none
-	messageargs = message.content.split(" ")
-	
-	try:
-	    arg1 = messageargs[1].strip()
-	    arg2 = messageargs[2].strip()
-	    if type(arg1) = int:
-		before_rotate = arg1
-	    elif type(arg1) = str:
-		before_rotate = 1
-		messages_from = arg1
-	    if type(arg2) = int:
-		before_rotate = arg2
-	    elif type(arg2) = str:
-		messages_from = arg2
-	
-	except:
-	    rotate = 1
+
+        arg1 = none
+	    arg2 = none
+	    rotate = 0
+	    before_rotate = none
 	    messages_from = none
-	    
-	
+	    messageargs = message.content.split(" ")
+	    try:
+	        arg1 = messageargs[1].strip()
+	        arg2 = messageargs[2].strip()
+	        if type(arg1) = int:
+		        before_rotate = arg1
+	        elif type(arg1) = str:
+		        before_rotate = 1
+		        messages_from = arg1
+	        if type(arg2) = int:
+		        before_rotate = arg2
+	        elif type(arg2) = str:
+		        messages_from = arg2
+
+	    except:
+	        rotate = 1
+	        messages_from = none
+
         messages.rotate(rotate)
         usermessage = messages.pop()
-	write_the_dang_thing()    
+	write_the_dang_thing()
 #nk, so we have the command that actully works. Now it needs to take input @grab <user> <number>
-       
 
     #messages = bot.messages
     #test = messages.pop()
@@ -140,8 +131,9 @@ async def on_message(message):
 
    if message.content.startswith(prefix + "help"):
         await bot.send_message(message.channel, "What command would you like help with?")
-        if message.content.lower().find("grab") !=-1:
-            help_meh.with_grab()
+        #if message.content.lower().find("grab") !=-1:
+        print(helpmeh.with_grab())
+        #await bot.send_message(message.channel, "test")
 
 
 bot.run(token)
