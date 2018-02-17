@@ -1,8 +1,11 @@
 {
     "scratchy": {
         "title": "scratchy",
-        "desc": "\"Some",
+        "desc": "\"A bot for doing awesome stuff.\"",
         "values": [
+            "test",
+            null,
+            "\"I can do really cool stuff.\"",
             "JSON-based bot for recording cool stuff."
         ]
     },
@@ -11,6 +14,13 @@
         "desc": "Bot (better bot).",
         "values": [
             "Funny bot that collects funnies and puts them in a funny jar (lol)."
+        ]
+    },
+    "monolith": {
+        "title": "Monolith",
+        "desc": "Stuff that has to do with project monolith.",
+        "values": [
+            "Fouric's brainchild."
         ]
     }
 }
