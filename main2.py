@@ -105,31 +105,6 @@ async def on_message(message):
         arg1 = messageargs[1].strip()
         arg2 = messageargs[2].strip()
         arg3 = messageargs[3].strip()
-	try:
-		if type(arg1) is int:
-			rotate = arg1
-		elif type(arg1) is str
-			if arg1 in users:
-              			messages_from = arg1
-                	else:
-                    		title = arg1
-            	elif type(arg2) is int:
-                	rotate = arg2
-	        elif type(arg2) is str:
-                	if arg2 in users:
-                    		messages_from = arg2
-                	else:
-                    		title = arg2
-            	if type(arg3) is int:
-                	rotate = arg3
-            	elif type(arg3) is str:
-                	if arg3 in users:
-                    		messages_from = arg3
-                	else:
-                    		title = arg3
-	    except Exception:
-            pass
-
         if messages_from != none:
             # needs to register if a username was provided, cycle through and only pick out those user messages
 
