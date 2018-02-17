@@ -3,9 +3,9 @@ import json
 
 class help_meh():
 
-    with open('help.json') as json_data:
-        h = json.load(json_data)
-        print(h)
+    with open('help.json') as json_file:
+        h = json.load(json_file)
+        print("Successfully loaded help.json.")
 
     #def display_commands(self):
         # display commands
@@ -21,11 +21,11 @@ class help_meh():
     def with_grab(self): # if @help grab
         #only the grab command: syntax - parameters - description
         # grab the name...
-        print(h.grab.command)
+        print(grab)
         # grab the syntax...
-        print(h.grab.syntax)
+        print(grab.syntax)
         #grab the description...
-        print(h.grab.description)
+        print(grab.description)
 
 
     #def with_add(self):

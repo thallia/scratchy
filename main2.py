@@ -7,6 +7,7 @@ import ioMod
 import os
 from collections import deque
 import helpMeh
+from helpMeh import help_meh
 
 description = "scratchpad bot"
 path = "/home/thallia/code/scratchy/"
@@ -52,6 +53,7 @@ async def on_message(message):
     prefix = "@"
     author = message.author.name.lower()
     messages = bot.messages
+    helpmeh = help_meh()
 
     if message.author.name.lower() == "scratchy":   # prevents triggering of self
         return
@@ -96,7 +98,6 @@ async def on_message(message):
     if message.content.startswith(prefix + "grab"): # checks for the trigger command
         user = ioMod.json_handler
         data = user.read_user(0, author)
-        #messages.reverse()
         messages.rotate(1)
         usermessage = messages.pop()
         if users[message.author.name.lower()] !=-1: # for the object in that user's file....
@@ -110,7 +111,8 @@ async def on_message(message):
 
     if message.content.startswith(prefix + "help"):
         await bot.send_message(message.channel, "What command would you like help with?")
-        if message.content.lower().find("grab") !=-1:
-            help_meh.with_grab()
+        #if message.content.lower().find("grab") !=-1:
+        print(helpmeh.with_grab())
+        #await bot.send_message(message.channel, "test")
 
 bot.run(token)
