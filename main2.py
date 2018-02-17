@@ -64,13 +64,6 @@ async def on_message(message):
     if message.author.name.lower() == "scratchy":   # prevents triggering of self
         return
 
-    #if message.content.startswith(prefix + " test") !=-1:
-    #await bot.send_message(message.channel, "derp")
-
-    print("adding: " + message.content)
-
-    #users["document"].insert(0, message.content)
-
     if message.content.startswith(prefix + "show"):
         data = None;
         handler = ioMod.json_handler()
@@ -99,44 +92,38 @@ async def on_message(message):
                             except Exception as e:
                                 print("")
             await bot.send_message(message.channel, fill_me + "```") 
-                    
-
 
     if message.content.startswith(prefix + "grab"): # checks for the trigger command
         user = ioMod.json_handler
         data = user.read_user(0, author)
-        messages.rotate(1)
 
-    arg1 = none
-	arg2 = none
-	rotate = 0
-	before_rotate = none
-	messages_from = none
-	messageargs = message.content.split(" ")
-	
-	try:
-	    arg1 = messageargs[1].strip()
-	    arg2 = messageargs[2].strip()
-	    if type(arg1) = int:
-		before_rotate = arg1
-	    elif type(arg1) = str:
-		before_rotate = 1
-		messages_from = arg1
-	    if type(arg2) = int:
-		before_rotate = arg2
-	    elif type(arg2) = str:
-		messages_from = arg2
-	
-	except:
-	    rotate = 1
+        arg1 = none
+	    arg2 = none
+	    rotate = 0
+	    before_rotate = none
 	    messages_from = none
-	    
-	
+	    messageargs = message.content.split(" ")
+	    try:
+	        arg1 = messageargs[1].strip()
+	        arg2 = messageargs[2].strip()
+	        if type(arg1) = int:
+		        before_rotate = arg1
+	        elif type(arg1) = str:
+		        before_rotate = 1
+		        messages_from = arg1
+	        if type(arg2) = int:
+		        before_rotate = arg2
+	        elif type(arg2) = str:
+		        messages_from = arg2
+
+	    except:
+	        rotate = 1
+	        messages_from = none
+
         messages.rotate(rotate)
         usermessage = messages.pop()
-	write_the_dang_thing()    
+	write_the_dang_thing()
 #nk, so we have the command that actully works. Now it needs to take input @grab <user> <number>
-       
 
     #messages = bot.messages
     #test = messages.pop()
