@@ -130,7 +130,6 @@ async def on_message(message):
                 rotate = int(arg3)
             except Exception:
                 pass
-
         try:
 
             if type(arg1) is int:
@@ -154,7 +153,6 @@ async def on_message(message):
                     messages_from = arg3
                 else:
                     title = arg3
-
         except Exception:
             pass
 
@@ -163,15 +161,13 @@ async def on_message(message):
         print("argument 3: " + str(arg3))
 
         print("rotate: " + str(rotate))
-        print("messages_from: " + messages_from)
-        print("title: " + title)
-
+        print("messages_from: " + str(messages_from))
+        print("title: " + str(title))
 
         #if messages_from != none:
             # needs to register if a username was provided, cycle through and only pick out those user messages
-
-
-
+        if rotate == 0:
+             rotate = 1
         i = rotate
         while i > 0:
             messages.rotate(rotate)
