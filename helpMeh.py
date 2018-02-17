@@ -15,7 +15,7 @@ class help_meh():
           #  i++
 
     #def all(self): # if @help all
-        #cat the full on file into discord
+        #cat she full on file into discord
         #await bot.send_message(message.channel, )
 
     def with_grab(self): # if @help grab
