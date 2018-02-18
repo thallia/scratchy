@@ -1,5 +1,6 @@
 import json
 import os
+import time
 from datetime import datetime
 from shutil import copyfile
 
@@ -32,6 +33,7 @@ class json_handler():
             with open(user.lower() + ".json", "w") as json_file:
                 if data != None:
                     json.dump(data, json_file, indent=4)            
+                    self.make_backup()
         else:
             print("ERROR: ioMod: '" + entry_name + "' file doesn't exist") 
  
@@ -92,25 +94,40 @@ class json_handler():
                 for f in files:
                     if type(f) == str:
                         if open(f):
-                            copyfile(f, self.backup_folder + f + time)
+                            copyfile(f, self.backup_folder + time + f)
                             return;
                         else:
-                             raise "ioMod: make_backup: Invalid file name"
-                             return;
+                             return "ioMod: make_backup: Invalid file name";
                     else:
-                        raise "ioMod: make_makup: "
-                        return;
+                        return "ioMod: make_makup: ";
             else:
-                raise "ioMod: 'make_backup()' takes a list of file strings."
-                return;                      
+                return "ioMod: 'make_backup()' takes a list of file strings.";                      
 
         for f in current_files:
             if f.endswith(".json"):
                 print("Copying: " + f)
-                copyfile(f, self.backup_folder + f + time)
+                copyfile(f, self.backup_folder + time + f)
 
         print("Done.")
+    
+    def cleanup_backups(self):
+        print("Removing old backups...")
+        backups = os.listdir(self.backup_folder)
+        now = time.time()
+        
+        one_day_ago = now - 60*60*24
 
+        for backup in backups:
+            print(backup)
+            file_time = os.path.getctime(self.backup_folder + backup)
+            if file_time < one_day_ago:
+                print("Found old backup: ")
+                print(backup)
+                os.remove(self.backup_folder + backup)
+        print("Done.")
+                
+        
+        
     #def backup_user(self, files
 
 def test(s):
@@ -121,8 +138,11 @@ if __name__ == "__main__":
     handle = json_handler()
     handle.foo_method(" world!");
     #handle.make_backup()
-    handle.new_file("fouric")
-    handle.new("fouric", "test")
+    print("-"*20)
+    handle.cleanup_backups()
+    print("-"*20)
+    handle.new_file("test_user")
+    handle.new("test_user", "test")
     print("I'me at: " + handle.path_to_me)
 	
 
