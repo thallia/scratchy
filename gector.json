@@ -35,5 +35,15 @@
             "fbgrab will take a screenshot of a terminal",
             "PSA: baobab is a really neat tool to graphically show disk usage on linux"
         ]
+    },
+    "vim_commands": {
+        "title": "vim_commands",
+        "desc": "",
+        "values": []
+    },
+    "test": {
+        "title": "test",
+        "desc": "",
+        "values": []
     }
 }
