@@ -230,48 +230,6 @@ async def on_message(message):
 
 
 
-    if msg_content.startswith(prefix + "set"):
-        # set <entry> <field> <value>
-        message_args = msg_content.split(" ")
-        arg1, arg2, arg3 = None, None, None # Way of assignming multiple variables at once.
-
-        try:
-            arg1 = str(message_args[1].strip()) # entry
-            arg2 = str(message_args[2].strip()) # field
-
-            index1 = find_quote(message_args)
-            index2 = find_quote(message_args, index1+1)
-            print(message_args[index1+1:])
-            print("Index1: {}, index2: {}".format(index1, index2))
-
-            if index2 != None:
-                arg3 = ' '.join(message_args[index1:index2+1]).replace('"', "")
-            else:
-                arg3 = ' '.join(message_args[index1:]).replace('"', "")
-
-            print(arg3)
-        except Exception as e:
-            await bot.send_message(msg_chan, "Err: Unable to parse args. Are you using `set <entry_name> <field_name> <value>`?") # Report error
-            return
-
-        data = None
-        handler = ioMod.json_handler()
-        try:
-            data = handler.read_user(msg_author)
-            if arg2 != "values":
-                data[arg1][arg2] = arg3
-                # write_user(obj, user)
-                handler.write_user(data, msg_author)
-            elif arg2 == "values":
-                data[arg1][arg2].insert(0, arg3)
-                handler.write_user(data, msg_author)
-
-            await bot.send_message(msg_chan, "Success! Try `{}show {}` to display your new scratchpad entry".format(prefix, arg1))
-        except Exception as e:
-            await bot.send_message(msg_chan, "Err: Unable to parse data. '{}'".format(e))
-            return
-
-
     if msg_content.startswith(prefix + "upload_scratch"):
         if os.path.isfile(msg_author + ".json"):
             await bot.send_message(msg_chan, "Uploading your scratchpad...")
@@ -405,7 +363,6 @@ async def on_message(message):
                 i - 1
             elif i == 0:
                 await bot.send_message(message.channel, "written to " + author + "'s scratchpad!")
->>>>>>> 4c8e2021d6c2bb30dc3d4459efc39538a89ac026
 
     if message.content.startswith(prefix + "help"):
         await bot.send_message(message.channel, "What command would you like help with?")
