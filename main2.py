@@ -165,6 +165,7 @@ async def on_message(message):
     if msg_content.startswith(prefix + "new"):
         message_args = msg_content.split(" ")
         arg1 = None
+
         try:
             arg1 = str(message_args[1].strip())
         except Exception as e:
@@ -174,6 +175,58 @@ async def on_message(message):
 
         result = new(arg=arg1)
         await bot.send_message(msg_chan, result)
+
+
+    if msg_content.startswith(prefix + "set"):
+        # set <entry> <field> <value>
+        message_args = msg_content.split(" ")
+        arg1, arg2, arg3 = None, None, None # Way of assignming multiple variables at once.
+
+        try:
+            arg1 = str(message_args[1].strip()) # entry
+            arg2 = str(message_args[2].strip()) # field
+
+            index1 = find_quote(message_args)
+            index2 = find_quote(message_args, index1+1)
+            print(message_args[index1+1:])
+            print("Index1: {}, index2: {}".format(index1, index2))
+
+            if index2 != None:
+                arg3 = ' '.join(message_args[index1:index2+1]).replace('"', "")
+            else:
+                arg3 = ' '.join(message_args[index1:]).replace('"', "")
+
+            print(arg3)
+        except Exception as e:
+            await bot.send_message(msg_chan, "Err: Unable to parse args. Are you using `set <entry_name> <field_name> <value>`?") # Report error
+            return
+
+        data = None
+        handler = ioMod.json_handler()
+        try:
+            data = handler.read_user(msg_author)
+            if arg2 != "values":
+                data[arg1][arg2] = arg3
+                # write_user(obj, user)
+                handler.write_user(data, msg_author)
+            elif arg2 == "values":
+                data[arg1][arg2].insert(0, arg3)
+                handler.write_user(data, msg_author)
+
+            await bot.send_message(msg_chan, "Success! Try `{}show {}` to display your new scratchpad entry".format(prefix, arg1))
+        except Exception as e:
+            await bot.send_message(msg_chan, "Err: Unable to parse data. '{}'".format(e))
+            return
+
+
+    if msg_content.startswith(prefix + "upload_scratch"):
+        if os.path.isfile(msg_author + ".json"):
+            await bot.send_message(msg_chan, "Uploading your scratchpad...")
+            await bot.send_file(msg_chan, os.getcwd() + "/" + msg_author + ".json")
+        else:
+            await bot.send_message(msg_chan, "Err: Unable to upload file, check to make sure it exists.")
+
+
 
     if msg_content.startswith(prefix + "set"):
         # set <entry> <field> <value>
@@ -229,6 +282,7 @@ async def on_message(message):
     if message.content.startswith(prefix + "grab"): # checks for the trigger command
         user = ioMod.json_handler
         data = user.read_user(0, author)
+<<<<<<< HEAD
         usr_prefix = "usr:"
         title_prefix = "t:"
         num_prefix = "num:"
@@ -252,6 +306,104 @@ async def on_message(message):
         #        i - 1
         #    elif i == 0:
         #        await bot.send_message(message.channel, "written to " + author + "'s scratchpad!")
+=======
+	arg1, arg2, arg3 = [0, 0, 0]
+        rotate = 0
+        before_rotate = 0
+        messages_from = 0
+        messageargs = message.content.split(" ")
+
+        arg1 = messageargs[1].strip()
+        try:
+            arg2 = messageargs[2].strip()
+        except Exception:
+            arg2 = None
+        try:
+            arg3 = messageargs[3].strip()
+        except Exception:
+            arg3 = None
+
+        print("before: " + str(arg1))
+        print("before: " + str(arg2))
+        print("before: " + str(arg3))
+
+        if before_rotate == 0:
+            try:
+                rotate = int(arg1)
+            except:
+                pass
+            try:
+                rotate = int(arg2)
+            except:
+                pass
+            try:
+                rotate = int(arg3)
+            except:
+                pass
+
+        print("rotate(with int args) " + str(rotate))
+
+        try:
+
+            #if type(arg1) is int:
+            #   rotate = arg1
+            if type(arg1) is str:
+                if arg1 in users:
+                    messages_from = arg1
+                else:
+                    title = arg1
+            #if type(arg2) is int:
+             #   rotate = arg2
+            if type(arg2) is str:
+                if arg2 in users:
+                    messages_from = arg2
+                else:
+                    title = arg2
+            #if type(arg3) is int:
+             #   rotate = arg3
+             if arg3 == None:
+
+
+                 if arg3 != None:
+                     if type(arg3) is str:
+                         if arg3 in users:
+                             messages_from = arg3
+                         else:
+                             title = arg3
+        except Exception:
+            pass
+
+        #if messages_from != none:
+            # needs to register if a username was provided, cycle through and only pick out those user messages
+
+        if title == None:
+            title = "messages"
+        if rotate == 0:
+             rotate = 1
+        i = rotate
+
+        print("argument 1: " + str(arg1))
+        print("argument 2: " + str(arg2))
+        print("argument 3: " + str(arg3))
+
+        print("rotate: " + str(rotate))
+        print("messages_from: " + str(messages_from))
+        print("title: " + str(title))
+
+        while i > 0:
+            messages.rotate(rotate)
+            usermessage = messages.pop()
+            write_the_dang_thing()
+            if i != 0:
+                x = rotate - 1
+                rotate = rotate * -1
+                messages.rotate(rotate)
+                rotate = x
+                messages.rotate(rotate)
+                i - 1
+            elif i == 0:
+                await bot.send_message(message.channel, "written to " + author + "'s scratchpad!")
+>>>>>>> 4c8e2021d6c2bb30dc3d4459efc39538a89ac026
 
     if message.content.startswith(prefix + "help"):
         await bot.send_message(message.channel, "What command would you like help with?")
