@@ -101,7 +101,8 @@ def show(data=None, subject = None):
 
     return (fill_me)
 
-
+def parse_args(args):
+   
 
 with open(file_token, 'r') as file:      # *takes all of gector's code*
     token = file.readline(100).strip()
@@ -126,6 +127,7 @@ async def on_message(message):
 
     global msg_author
     global msg_chan
+    global msg_content
 
     msg_content = message.content
     msg_author = message.author.name.lower()
