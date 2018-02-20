@@ -41,6 +41,45 @@ def find_quote(msg_list, index = 0):
         if x.find('"') != -1:
             return msg_list.index(x)
 
+def set_entry(args, data = None):
+    # set <entry> <field> <value>
+    
+    value = args[2:]  
+
+    index1 = find_quote(value)
+    index2 = find_quote(value, index1+1)
+
+    print(value[index1+1:])
+    print("Index1: {}, index2: {}".format(index1, index2))
+    print("Arg0: {}, Arg1: {}".format(args[0], args[1]))   
+    text = None
+    if index2 != None:
+        text = ' '.join(value[index1:index2+1]).replace('"', "")
+    else:
+        text = ' '.join(value[index1:]).replace('"', "")
+
+    print(text)
+    
+    # Make a temporary backup.
+    handler = ioMod.json_handler()
+    handler.make_backup()
+
+    if args[1] != "values":
+        try:
+            data[args[0]][args[1]] = text
+            # write_user(obj, user)
+            handler.write_user(data, msg_author)
+        except KeyError:
+            return "Entry not in scratchpad!"
+    elif args[1] == "values":
+        try:
+            data[args[0]][args[1]].insert(0, text)
+            handler.write_user(data, msg_author)
+        except KeyError:
+            return "If you see this, check set function for idiot's coding error."
+
+    return "Success! Try `{}show {}` to display your new scratchpad entry".format(prefix, args[0])
+
 def new(data=None, arg=None):
     handler = ioMod.json_handler()
     try:
@@ -131,7 +170,7 @@ def parse_args(args): # return argruments seperated into their different data ty
                         pass;
 
             else:
-                return_type['strings'].insert(0, elem)
+                return_type['strings'].append(elem)
 
     return return_type;
 
@@ -212,6 +251,23 @@ async def on_message(message):
 
     if msg_content.startswith(prefix + "set"):
         # set <entry> <field> <value>
+        if(len(msg_content.split(' ')) <= 3):
+            await bot.send_message(msg_chan, "Incorrect amount or setup of argruments. Try `@set <entry> <field> <value>`.")
+            return;
+
+        args = parse_args(msg_content.split(" ")[1:])
+        
+        handler = ioMod.json_handler()
+        data = handler.read_user(msg_author)
+        if type(data) == str:   # Error message was returned
+            await bot.send_message(msg_chan, data)
+            return # Stop the code.
+
+        if len(args['strings']) >= 3: # We have a correct setup.
+            await bot.send_message(msg_chan, set_entry(args['strings'], data=data))
+        else:
+            await bot.send_message(msg_chan, "Incorrect amount or setup of argruments. Try `@set <entry> <field> <value>`.")
+        '''
         message_args = msg_content.split(" ")
         arg1, arg2, arg3 = None, None, None # Way of assignming multiple variables at once.
 
@@ -250,7 +306,7 @@ async def on_message(message):
         except Exception as e:
             await bot.send_message(msg_chan, "Err: Unable to parse data. '{}'".format(e))
             return
-
+        '''
 
     if msg_content.startswith(prefix + "upload_scratch"):
         if os.path.isfile(msg_author + ".json"):
