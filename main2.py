@@ -8,6 +8,7 @@ import os
 from collections import deque
 import helpMeh
 from helpMeh import help_meh
+import itertools
 
 description = "scratchpad bot"
 path = "/home/thallia/code/scratchy/"
@@ -200,24 +201,28 @@ async def on_message(message):
     if message.content.startswith(prefix + "grab"): # checks for the trigger command
         user = ioMod.json_handler
         data = user.read_user(0, author)
-        usr, title, num = [0, 0, 0]
+        usr, title, num, result, result_from = [0, 0, 0, 0, 0]
         usr_pre = "usr"
         title_pre = "t"
         num_pre = "num"
-        messageargs = msg_content.split(" ").split(";")
+        msg_args = msg_content.split(" ")
+        for elem in msg_args:
+            if elem.find(":") != -1:
+                msg_args[msg_args.index(elem)] = elem.split(":")
 
-        def write_the_dang_thing(result):
+        def write_the_dang_thing():
             result = result_from
             if num != 0:
                 i = num
                 while i > 0:
                     if users[message.author.name.lower()] !=-1: 
-                        data[title].insert(0, result.content) # inserts the message into the file
+                        data[title].insert(0, message.content) # inserts the message into the file
                         user.write(0, data, author + ".json") # writes the file
                         i = i - 1
 
         # smaller deque to shuffle through
-        msg_deq = messages[:200] # makes deque 200 messages
+        msg_deq = itertools.islice(messages, 0, 200) # makes deque 200 messages
+
         channel = msg_chan # grabs channel to sort from (chan you sent trigger from)
 
         def chan_cheq(input_arg): # sorts through messages from specific channels
@@ -225,35 +230,35 @@ async def on_message(message):
                 return input_arg
 
         def usr_cheq(input_arg): # sorts through specific users
-            if usr == users:
+            if usr == users(elem):
                 return input_arg
 
         #def grab_num():
 
         chan_deq = filter(chan_cheq, msg_deq) # filters out specific channel to grab from in the deq
 
-        if title_pre in messageargs:
-            title_place = messageargs.index("t")
+        if title_pre in msg_args:
+            title_place = msg_args.index("t")
             title_name = title_place + 1
-            title = messageargs[title_name].strip()
+            title = msg_args[title_name].strip()
             print(title)
         else:
             title = "messages"
             print(title)
 
 
-        if usr_pre in messageargs:
-            usr_place = messageargs.index("usr") # returns where usr is
+        if usr_pre in msg_args:
+            usr_place = msg_args.index("usr") # returns where usr is
             usr_name = usr_place + 1  # gets position of username
-            usr = messageargs[usr_name].strip() # gets user to copy from
+            usr = msg_args[usr_name].strip() # gets user to copy from
             print(usr)
             usr_deq = filter(usr_cheq, chan_deq) # filters deq with username to copy from
             result_from = usr_deq
 
-            if num_pre in messageargs:
-                num_place = messageargs.index("num") # finds number arg position
+            if num_pre in msg_args:
+                num_place = msg_args.index("num") # finds number arg position
                 num_pos = num_place + 1 # gets actual number
-                num = messageargs[num_pos].strip()
+                num = msg_args[num_pos].strip()
                 print(int(num))
             else:
                 num = 1
@@ -262,10 +267,10 @@ async def on_message(message):
                 await bot.send_message(msg_chan, "Saved to " + author + "'s scratchpad!")
                 return
 
-        elif num_pre in messageargs: # copied bc if no user, can't pull from usr_deq
-            num_place = messageargs.index("num") # finds number arg position
+        elif num_pre in msg_args: # copied bc if no user, can't pull from usr_deq
+            num_place = msg_args.index("num") # finds number arg position
             num_pos = num_place + 1 # gets actual number
-            num = messageargs[num_pos].strip()
+            num = msg_args[num_pos].strip()
             print(int(num))
             result_from = chan_deq
         else:
