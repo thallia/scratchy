@@ -10,11 +10,13 @@ import helpMeh
 from helpMeh import help_meh
 import itertools
 
+global input_text
+input_text = []
 description = "scratchpad bot"
 path = "/home/thallia/code/scratchy/"
 file_token = "/home/thallia/key/scratchy-discord-token.txt"
-#if os.getcwd().find("gector"):
-    #file_token = "/home/gector/key.txt"
+if os.getcwd().find("gector") != -1:
+    file_token = "/home/gector/key.txt"
 
 token = ""
 
@@ -90,11 +92,19 @@ print("Bot token: " + token)
 
 bot = discord.Client()
 
+global q
+
 @bot.event  # must confirm the connection when it's done connecting
 async def on_ready():
     print("Connected!")
     print("Username: " + bot.user.name)
     print("-----------------")
+    #await bot.send_message(bot.get_channel("289957526882222080"), "ready")#test)
+    while True:
+        i = await q.get()
+        if type(i) == str:
+                await bot.send_message(bot.get_channel("289957526882222080"), i)
+                #print(i)
 
 @bot.event
 async def on_message(message):
@@ -149,45 +159,22 @@ async def on_message(message):
 
     if msg_content.startswith(prefix + "set"):
         # set <entry> <field> <value>
-        message_args = msg_content.split(" ")
-        arg1, arg2, arg3 = None, None, None # Way of assignming multiple variables at once.
+        if(len(msg_content.split(' ')) <= 3):
+            await bot.send_message(msg_chan, "Incorrect amount or setup of argruments. Try `@set <entry> <field> <value>`.")
+            return;
 
-        try:
-            arg1 = str(message_args[1].strip()) # entry
-            arg2 = str(message_args[2].strip()) # field
-
-            index1 = find_quote(message_args)
-            index2 = find_quote(message_args, index1+1)
-            print(message_args[index1+1:])
-            print("Index1: {}, index2: {}".format(index1, index2))
-
-            if index2 != None:
-                arg3 = ' '.join(message_args[index1:index2+1]).replace('"', "")
-            else:
-                arg3 = ' '.join(message_args[index1:]).replace('"', "")
-
-            print(arg3)
-        except Exception as e:
-            await bot.send_message(msg_chan, "Err: Unable to parse args. Are you using `set <entry_name> <field_name> <value>`?") # Report error
-            return
-
-        data = None
+        args = parse_args(msg_content.split(" ")[1:])
+        
         handler = ioMod.json_handler()
-        try:
-            data = handler.read_user(msg_author)
-            if arg2 != "values":
-                data[arg1][arg2] = arg3
-                # write_user(obj, user)
-                handler.write_user(data, msg_author)
-            elif arg2 == "values":
-                data[arg1][arg2].insert(0, arg3)
-                handler.write_user(data, msg_author)
+        data = handler.read_user(msg_author)
+        if type(data) == str:   # Error message was returned
+            await bot.send_message(msg_chan, data)
+            return # Stop the code.
 
-            await bot.send_message(msg_chan, "Success! Try `{}show {}` to display your new scratchpad entry".format(prefix, arg1))
-        except Exception as e:
-            await bot.send_message(msg_chan, "Err: Unable to parse data. '{}'".format(e))
-            return
-
+        if len(args['strings']) >= 3: # We have a correct setup.
+            await bot.send_message(msg_chan, set_entry(args['strings'], data=data))
+        else:
+            await bot.send_message(msg_chan, "Incorrect amount or setup of argruments. Try `@set <entry> <field> <value>`.")
 
     if msg_content.startswith(prefix + "upload_scratch"):
         if os.path.isfile(msg_author + ".json"):
@@ -195,7 +182,6 @@ async def on_message(message):
             await bot.send_file(msg_chan, os.getcwd() + "/" + msg_author + ".json")
         else:
             await bot.send_message(msg_chan, "Err: Unable to upload file, check to make sure it exists.")
-
 
 
     if message.content.startswith(prefix + "grab"): # checks for the trigger command
@@ -286,5 +272,24 @@ async def on_message(message):
         print(helpmeh.with_grab())
         #await bot.send_message(message.channel, "test")
 
+def got_stdin_data(q): # Get input.
+    asyncio.async(q.put(sys.stdin.readline()))
+    if not q.empty():
+        print(list(q.get_nowait()))
+
+q = asyncio.Queue()
+loop = asyncio.get_event_loop()
+loop.add_reader(sys.stdin, got_stdin_data, q)
+tasks = [
+        asyncio.gather(bot.run(token))
+        ]
+try:
+    loop.run_until_complete(asyncio.wait(tasks))
+except KeyboardInterrupt:
+        pass;
+
+loop.close()
+
+#bot.run(token)
 
 bot.run(token)
