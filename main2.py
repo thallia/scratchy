@@ -248,7 +248,6 @@ async def on_message(message):
         for elem in msg_args:
             if elem.find(":") != -1:
                 msg_args[msg_args.index(elem)] = elem.split(":")
-                #msgs = [msg_args[0] for elem in msg_args]
 
         print("arguments: " + str(msg_args))
 
@@ -278,7 +277,6 @@ async def on_message(message):
         chan_deq = filter(chan_cheq, msg_deq) # filters out specific channel to grab from in the deq
 
         if title_pre in msg_args:  # title prefix is "ti"
-            # not comparing the strings correctly with the if statement, need to fix this. all commented out stuff needs to be adjusted with solution.
             title_place = msg_args.index("ti")
             title_name = title_place + 1
             title = msg_args[title_name].strip()
@@ -289,19 +287,19 @@ async def on_message(message):
                 print(title)
 
 
-        #if usr_pre in msg_args:
-        #    usr_place = msg_args.index("usr") # returns where usr is
-        #    usr_name = usr_place + 1  # gets position of username
-        #    usr = msg_args[usr_name].strip() # gets user to copy from
-        #    print(usr)
-        #    usr_deq = filter(usr_cheq, chan_deq) # filters deq with username to copy from
-         #   result_from = usr_deq
+        if usr_pre in msg_args:
+            usr_place = msg_args.index("usr") # returns where usr is
+            usr_name = usr_place + 1  # gets position of username
+            usr = msg_args[usr_name].strip() # gets user to copy from
+            print(usr)
+            usr_deq = filter(usr_cheq, chan_deq) # filters deq with username to copy from
+            result_from = usr_deq
 
-            #if num_pre in msg_args:
-            #    num_place = msg_args.index("num") # finds number arg position
-            #    num_pos = num_place + 1 # gets actual number
-            #    num = msg_args[num_pos].strip()
-            #    print(int(num))
+            if num_pre in msg_args:
+                num_place = msg_args.index("num") # finds number arg position
+                num_pos = num_place + 1 # gets actual number
+                num = msg_args[num_pos].strip()
+                print(int(num))
             else:
                 num = 1
                 print(num)
@@ -309,12 +307,12 @@ async def on_message(message):
                 await bot.send_message(msg_chan, "Saved to " + author + "'s scratchpad!")
                 return
 
-        #elif num_pre in msg_args: # copied bc if no user, can't pull from usr_deq
-        #    num_place = msg_args.index("num") # finds number arg position
-        #    num_pos = num_place + 1 # gets actual number
-        #    num = msg_args[num_pos].strip()
-        #    print(int(num))
-        #    result_from = chan_deq
+        elif num_pre in msg_args: # copied bc if no user, can't pull from usr_deq
+            num_place = msg_args.index("num") # finds number arg position
+            num_pos = num_place + 1 # gets actual number
+            num = msg_args[num_pos].strip()
+            print(int(num))
+            result_from = chan_deq
         else:
             num = 1
             print(num)
