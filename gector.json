@@ -47,5 +47,8 @@
         "title": "test",
         "desc": "",
         "values": []
-    }
+    },
+    "messages":[
+	    "A test message that was never sent"
+    ]
 }
