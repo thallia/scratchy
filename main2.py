@@ -60,13 +60,13 @@ def new(data=None, arg=None):
             return "Unable to complete request! Please contact a developer."
 
 
-def show(data=None, subject = None):
+def show(data=None, subject = None, values = None):
     show_all = False;
     fill_me = ""
     if subject != None and subject != []:
         if set(subject).issubset(data):
             data = {key:data[key] for key in subject}
-            print("Data: {}, \nSubject: {}".format(data, subject))
+            #print("Data: {}, \nSubject: {}".format(data, subject))
             show_all = True;
             fill_me = ""
         else:
@@ -85,9 +85,16 @@ def show(data=None, subject = None):
                 elif type(value) == list:
                     indent = 6*' '
                     fill_me += element + ": " + "\n" + indent
-                    for x in range(0, 9):
-                        if x < len(value) and value[x] != None:
-                            fill_me += "({}) ".format(x) + "\"" + value[x] + "\"\n" + indent
+                    if values == None:
+                        for x in range(0, 9):
+                            if x < len(value) and value[x] != None:
+                                fill_me += "({}) ".format(x) + "\"" + value[x] + "\"\n" + indent
+                    else:
+                        for x in values:
+                            if x < len(value) and value[x] != None:
+                                fill_me += "({}) ".format(x) + "\"" + value[x] + "\"\n" + indent
+
+
         elif show_all == False:
             fill_me = "```\n"
             for f in data.values():
@@ -101,8 +108,32 @@ def show(data=None, subject = None):
 
     return (fill_me)
 
-def parse_args(args):
-   
+def parse_args(args): # return argruments seperated into their different data types
+    return_type = {
+            "integers": [],
+            "strings": []
+            }
+    for elem in args:
+        try:
+            x = int(elem)
+            return_type['integers'].append(x)
+        except:
+            if elem.find(':') != -1: # We have a range
+                s = elem.split(":")
+                if len(s) == 2: # we have a correctly formatted range
+                    try:
+                        digit1 = int(s[0])
+                        digit2 = int(s[1])
+                        for n in range(digit1, digit2):
+                            return_type['integers'].append(n)
+                    except:
+                        print("failed.")
+                        pass;
+
+            else:
+                return_type['strings'].insert(0, elem)
+
+    return return_type;
 
 with open(file_token, 'r') as file:      # *takes all of gector's code*
     token = file.readline(100).strip()
@@ -142,27 +173,27 @@ async def on_message(message):
     if message.author.name.lower() == "scratchy":   # prevents triggering of self
         return
 
+    if msg_content.startswith(prefix + "test"):
+        parse_args(msg_content.split(' '))
+
+    ### `@show [field] [range]`
     if message.content.startswith(prefix + "show"):
-        message_args = message.content.split(" ")
-        arg1 = None
-        try:
-            arg1 = message_args[1:]
-        except Exception as e:
-            print("no argrument")
-
-        data = None;
+        args = parse_args(message.content.split(" ")[1:]) # Returns a dictionary of integers/strings with their indexes.
+        
         handler = ioMod.json_handler()
-        try:
-            data = handler.read_user(message.author.name.lower())
-        except Exception as e:
-            print("ERROR: Failed to read user '{}', does their file exist?".format(message.author.name.lower()))
-            await bot.send_message(message.channel, e)
-            return;
+        data = handler.read_user(msg_author) # Error handling of files is done in the class.
+        
+        if type(data) == str:   # Error message was returned
+            await bot.send_message(msg_chan, data)
+            return # Stop the code.
 
-        if arg1 != "" or arg1 != None:
-            await bot.send_message(message.channel, show(data = data, subject = arg1))
-        else:
-            await bot.send_message(message.channel, show(data = data))
+        if len(args['strings']) == 0: ## Show only list of posssible fields
+            await bot.send_message(msg_chan, show(data = data)) # Code that calls the SHOW function
+        elif len(args['integers']) >= 1 and len(args['strings']) >= 1: ## Show either range or specified indexes of values
+            await bot.send_message(message.channel, show(data = data, subject = args['strings'], values = args['integers'])) 
+        elif len(args['strings']) >= 1: ## Show the values of that specific field
+            await bot.send_message(message.channel, show(data = data, subject = args['strings'])) 
+
 
     if msg_content.startswith(prefix + "new"):
         message_args = msg_content.split(" ")
