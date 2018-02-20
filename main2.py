@@ -223,7 +223,7 @@ async def on_message(message):
 
         chan_deq = filter(chan_cheq, msg_deq) # filters out specific channel to grab from in the deq
 
-        if title_pre in msg_args:
+        if title_pre in msg_args: ## change to for?
             title_place = msg_args.index("t")
             title_name = title_place + 1
             title = msg_args[title_name].strip()
