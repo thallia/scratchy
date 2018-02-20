@@ -1,3 +1,5 @@
 __pycache__/
 backups/
-
+main_backup.py
+main2.py.bak
+.swap

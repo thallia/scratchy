@@ -7,17 +7,6 @@ import ioMod
 import os
 from collections import deque
 
-if message.content.startswith(prefix + "grab"): # checks for the trigger command
-    user = ioMod.json_handler
-    data = user.read_user(0, author)
-    #messages.reverse()
-    messages.rotate(1)
-    usermessage = messages.pop()
-    if users[message.author.name.lower()] !=-1: # for the object in that user's file....
-        data["messages"].insert(0, usermessage.content) # inserts the message into the file
-        user.write(0, data, author + ".json") # writes the file
-        await bot.send_message(message.channel, "written to " + author + "'s scratchpad!")
-
 description = "scratchpad bot"
 path = "/home/thallia/code/scratchy/"
 file_token = "/home/thallia/key/scratchy-discord-token.txt"
@@ -46,24 +35,8 @@ users = {
 def find_quote(msg_list, index = 0):
     for x in msg_list[index:]:
         print(x)
-            if x.find('"') != -1:
-                return msg_list.index(x)
-        def new():
-            data = None
-    handler = ioMod.json_handler()
-    try:
-        data = handler.read_user(msg_author)
-        if data == None:
-            # new_file(user, fp = None)
-    handler.new_file(msg_author)
-    data = handler.read_user(msg_author)
-
-    # new(user, entry_name):
-    handler.new(msg_author, arg1)
-    await bot.send_message(msg_chan, "Success! Try `{}show {}` to display your new scratchpad entry".format(prefix, arg1))
-    except Exception as e:
-    await bot.send_message(msg_chan, "{}".format(e))
-    return
+        if x.find('"') != -1:
+            return msg_list.index(x)
 
 def show(data=None, subject = None):
     show_all = False;
@@ -160,16 +133,30 @@ async def on_message(message):
             await bot.send_message(message.channel, show(data = data, subject = arg1))
         else: 
             await bot.send_message(message.channel, show(data = data))
-    
+
     if msg_content.startswith(prefix + "new"):
         message_args = msg_content.split(" ")
         arg1 = None
-        
         try:
             arg1 = str(message_args[1].strip())
         except Exception as e:
             await bot.send_message(msg_chan, "Err: Unable to parse args. Are you using `new <entry_name>`?") # Report error
-            return
+            await bot.send_message(msg_chan, "{}".format(e))
+            
+        data = None
+        handler = ioMod.json_handler()
+        try:
+            data = handler.read_user(msg_author)
+            if data == None:
+                # new_file(user, fp = None)
+                handler.new_file(msg_author)
+                data = handler.read_user(msg_author)
+    
+            # new(user, entry_name):
+            handler.new(msg_author, arg1)
+            await bot.send_message(msg_chan, "Success! Try `{}show {}` to display your new scratchpad entry".format(prefix, arg1))
+        except Exception as e:
+            await bot.send_message(msg_chan, "{}".format(e))
             
     
     if msg_content.startswith(prefix + "set"):
