@@ -213,7 +213,7 @@ async def on_message(message):
             return;
 
         args = parse_args(msg_content.split(" ")[1:])
-        
+
         handler = ioMod.json_handler()
         data = handler.read_user(msg_author)
         if type(data) == str:   # Error message was returned
@@ -231,22 +231,26 @@ async def on_message(message):
             await bot.send_file(msg_chan, os.getcwd() + "/" + msg_author + ".json")
         else:
             await bot.send_message(msg_chan, "Err: Unable to upload file, check to make sure it exists.")
-    
+
     if msg_content.startswith(prefix + "ping"): # For testing if I'm on.
         await bot.send_message(msg_chan, "Pong!")
 
     if message.content.startswith(prefix + "grab"): # checks for the trigger command
         user = ioMod.json_handler()         #user = ioMod.json_handler
         data = user.read_user(msg_author)   #data = user.read_user(0, author)
-        usr, title, num, result, result_from = [0, 'messages', 0, 0, 0]
-        usr_pre = "usr"
-        title_pre = "t"
-        num_pre = "num"
+        usr, title, num, result, result_from = [0, 0, 0, 0, 0]
+        usr_pre = 'usr'
+        title_pre = 'ti'
+        num_pre = 'num'
         msg_args = msg_content.split(" ")
+        print("arguments: " + str(msg_args))
 
         for elem in msg_args:
             if elem.find(":") != -1:
                 msg_args[msg_args.index(elem)] = elem.split(":")
+                #msgs = [msg_args[0] for elem in msg_args]
+
+        print("arguments: " + str(msg_args))
 
         def write_the_dang_thing():
             result = result_from
@@ -264,40 +268,40 @@ async def on_message(message):
         channel = msg_chan # grabs channel to sort from (chan you sent trigger from)
 
         def chan_cheq(input_arg): # sorts through messages from specific channels
-            if input_arg.channel == channel:
+            if input_arg.channel == channel:  #if the input message is the same as the channel you sent the trigger from, return only those messages
                 return input_arg
 
-        def usr_cheq(input_msg, input_usr): # sorts through specific users
-            if input_msg.author.name.lower() == input_user  #if usr == users(elem):
+        def usr_cheq(input_arg): # sorts through specific users
+            for usr in input_arg.author: # for the user inputted to copy from in the argument passed, return the message to copy
                 return input_arg
-
-        #def grab_num():
 
         chan_deq = filter(chan_cheq, msg_deq) # filters out specific channel to grab from in the deq
 
-        if title_pre in msg_args: ## change to for?
-            title_place = msg_args.index("t")
+        if title_pre in msg_args:  # title prefix is "ti"
+            # not comparing the strings correctly with the if statement, need to fix this. all commented out stuff needs to be adjusted with solution.
+            title_place = msg_args.index("ti")
             title_name = title_place + 1
             title = msg_args[title_name].strip()
             print(title)
-        else:
-            title = "messages"
-            print(title)
+
+            if title == 0:
+                title = "messages"
+                print(title)
 
 
-        if usr_pre in msg_args:
-            usr_place = msg_args.index("usr") # returns where usr is
-            usr_name = usr_place + 1  # gets position of username
-            usr = msg_args[usr_name].strip() # gets user to copy from
-            print(usr)
-            usr_deq = filter(usr_cheq, chan_deq) # filters deq with username to copy from
-            result_from = usr_deq
+        #if usr_pre in msg_args:
+        #    usr_place = msg_args.index("usr") # returns where usr is
+        #    usr_name = usr_place + 1  # gets position of username
+        #    usr = msg_args[usr_name].strip() # gets user to copy from
+        #    print(usr)
+        #    usr_deq = filter(usr_cheq, chan_deq) # filters deq with username to copy from
+         #   result_from = usr_deq
 
-            if num_pre in msg_args:
-                num_place = msg_args.index("num") # finds number arg position
-                num_pos = num_place + 1 # gets actual number
-                num = msg_args[num_pos].strip()
-                print(int(num))
+            #if num_pre in msg_args:
+            #    num_place = msg_args.index("num") # finds number arg position
+            #    num_pos = num_place + 1 # gets actual number
+            #    num = msg_args[num_pos].strip()
+            #    print(int(num))
             else:
                 num = 1
                 print(num)
@@ -305,12 +309,12 @@ async def on_message(message):
                 await bot.send_message(msg_chan, "Saved to " + author + "'s scratchpad!")
                 return
 
-        elif num_pre in msg_args: # copied bc if no user, can't pull from usr_deq
-            num_place = msg_args.index("num") # finds number arg position
-            num_pos = num_place + 1 # gets actual number
-            num = msg_args[num_pos].strip()
-            print(int(num))
-            result_from = chan_deq
+        #elif num_pre in msg_args: # copied bc if no user, can't pull from usr_deq
+        #    num_place = msg_args.index("num") # finds number arg position
+        #    num_pos = num_place + 1 # gets actual number
+        #    num = msg_args[num_pos].strip()
+        #    print(int(num))
+        #    result_from = chan_deq
         else:
             num = 1
             print(num)

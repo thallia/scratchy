@@ -48,7 +48,9 @@
         "desc": "",
         "values": []
     },
-    "messages":[
-	    "A test message that was never sent"
+    "messages": [
+        "@grab usr:thallia num:3",
+        "@grab",
+        "A test message that was never sent"
     ]
 }
