@@ -58,7 +58,7 @@ def show(data=None, subject = None):
     for field in data.values():
         #await bot.send_message(message.channel, field)
         #print(field)
-        if type(field) == list or type(field) == dict and show_all:
+        if type(field) == dict and show_all:
             fill_me += "```"
             for element in field:
                 indent = ''
@@ -71,12 +71,23 @@ def show(data=None, subject = None):
                     for x in range(0, 9):
                         if x < len(value) and value[x] != None:
                             fill_me += "({}) ".format(x) + "\"" + value[x] + "\"\n" + indent
+        elif type(field) == list:
+            fill_me += "```\n"
+            indent = 4*' '
+            fill_me += list(data.keys())[list(data.values()).index(field)]+ "\n"
+            for x in range(0, 9):
+                if x < len(field) and field[x] != None:
+                    fill_me += "({}) ".format(x) + "\"" + field[x] + "\"\n" + indent
+
         elif show_all == False:
             fill_me = "```\n"
             for f in data.values():
                 if type(f) == dict:
                     print(f['title'])
                     fill_me += f['title'] + "\n"
+                if type(f) == list:
+                    fill_me += list(data.keys())[list(data.values()).index(f)]+ "\n"
+
             fill_me += "```"
             return fill_me
 
