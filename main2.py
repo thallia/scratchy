@@ -42,6 +42,44 @@ def find_quote(msg_list, index = 0):
         print(x)
         if x.find('"') != -1:
             return msg_list.index(x)
+def set_entry(args, data = None):
+    # set <entry> <field> <value>
+    
+    value = args[2:]  
+
+    index1 = find_quote(value)
+    index2 = find_quote(value, index1+1)
+
+    print(value[index1+1:])
+    print("Index1: {}, index2: {}".format(index1, index2))
+    print("Arg0: {}, Arg1: {}".format(args[0], args[1]))   
+    text = None
+    if index2 != None:
+        text = ' '.join(value[index1:index2+1]).replace('"', "")
+    else:
+        text = ' '.join(value[index1:]).replace('"', "")
+
+    print(text)
+    
+    # Make a temporary backup.
+    handler = ioMod.json_handler()
+    handler.make_backup()
+
+    if args[1] != "values":
+        try:
+            data[args[0]][args[1]] = text
+            # write_user(obj, user)
+            handler.write_user(data, msg_author)
+        except KeyError:
+            return "Entry not in scratchpad!"
+    elif args[1] == "values":
+        try:
+            data[args[0]][args[1]].insert(0, text)
+            handler.write_user(data, msg_author)
+        except KeyError:
+            return "If you see this, check set function for idiot's coding error."
+
+    return "Success! Try `{}show {}` to display your new scratchpad entry".format(prefix, args[0])
 
 def show(data=None, subject = None):
     show_all = False;
@@ -193,29 +231,32 @@ async def on_message(message):
             await bot.send_file(msg_chan, os.getcwd() + "/" + msg_author + ".json")
         else:
             await bot.send_message(msg_chan, "Err: Unable to upload file, check to make sure it exists.")
-
+    
+    if msg_content.startswith(prefix + "ping"): # For testing if I'm on.
+        await bot.send_message(msg_chan, "Pong!")
 
     if message.content.startswith(prefix + "grab"): # checks for the trigger command
-        user = ioMod.json_handler
-        data = user.read_user(0, author)
-        usr, title, num, result, result_from = [0, 0, 0, 0, 0]
+        user = ioMod.json_handler()         #user = ioMod.json_handler
+        data = user.read_user(msg_author)   #data = user.read_user(0, author)
+        usr, title, num, result, result_from = [0, 'messages', 0, 0, 0]
         usr_pre = "usr"
         title_pre = "t"
         num_pre = "num"
         msg_args = msg_content.split(" ")
+
         for elem in msg_args:
             if elem.find(":") != -1:
                 msg_args[msg_args.index(elem)] = elem.split(":")
 
         def write_the_dang_thing():
             result = result_from
-            if num != 0:
+            if num > 0:
                 i = num
                 while i > 0:
-                    if users[message.author.name.lower()] !=-1: 
-                        data[title].insert(0, message.content) # inserts the message into the file
-                        user.write(0, data, author + ".json") # writes the file
-                        i = i - 1
+                    if title in data:
+                        data[title].insert(0, msg_content) # inserts the message into the file
+                        user.write_user(data, msg_author) # writes the file
+                        i -= 1
 
         # smaller deque to shuffle through
         msg_deq = itertools.islice(messages, 0, 200) # makes deque 200 messages
@@ -226,8 +267,8 @@ async def on_message(message):
             if input_arg.channel == channel:
                 return input_arg
 
-        def usr_cheq(input_arg): # sorts through specific users
-            if usr == users(elem):
+        def usr_cheq(input_msg, input_usr): # sorts through specific users
+            if input_msg.author.name.lower() == input_user  #if usr == users(elem):
                 return input_arg
 
         #def grab_num():
