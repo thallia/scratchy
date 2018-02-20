@@ -12,8 +12,8 @@ from helpMeh import help_meh
 description = "scratchpad bot"
 path = "/home/thallia/code/scratchy/"
 file_token = "/home/thallia/key/scratchy-discord-token.txt"
-if os.getcwd().find("gector"):
-    file_token = "/home/gector/key.txt"
+#if os.getcwd().find("gector"):
+    #file_token = "/home/gector/key.txt"
 
 token = ""
 
@@ -90,7 +90,7 @@ print("Bot token: " + token)
 bot = discord.Client()
 
 @bot.event  # must confirm the connection when it's done connecting
-async def on_ready():
+sync def on_ready():
     print("Connected!")
     print("Username: " + bot.user.name)
     print("-----------------")
@@ -105,10 +105,16 @@ async def on_message(message):
     helpmeh = help_meh()
     title = ""
 
+    msg_content = message.content
+    msg_author = message.author.name.lower()
+    msg_chan = message.channel
+
     def write_the_dang_thing():
         if users[message.author.name.lower()] !=-1: # for the object in that user's file....
             data[title].insert(0, usermessage.content) # inserts the message into the file
             user.write(0, data, author + ".json") # writes the file
+
+    def
 
     if message.author.name.lower() == "scratchy":   # prevents triggering of self
         return
@@ -200,102 +206,38 @@ async def on_message(message):
     if message.content.startswith(prefix + "grab"): # checks for the trigger command
         user = ioMod.json_handler
         data = user.read_user(0, author)
-	arg1, arg2, arg3 = [0, 0, 0]
-        rotate = 0
-        before_rotate = 0
-        messages_from = 0
+        arg1, arg2, arg3 = [0, 0, 0]
+        usr_prefix = "usr:"
+        title_prefix = "t:"
+        num_prefix = "num:"
         messageargs = message.content.split(" ")
-
         arg1 = messageargs[1].strip()
-        try:
-            arg2 = messageargs[2].strip()
-        except Exception:
-            arg2 = None
-        try:
-            arg3 = messageargs[3].strip()
-        except Exception:
-            arg3 = None
+        arg2 = messagesargs[2].strip()
+        arg3 = messageargs[3].strip()
 
-        print("before: " + str(arg1))
-        print("before: " + str(arg2))
-        print("before: " + str(arg3))
-
-        if before_rotate == 0:
-            try:
-                rotate = int(arg1)
-            except:
-                pass
-            try:
-                rotate = int(arg2)
-            except:
-                pass
-            try:
-                rotate = int(arg3)
-            except:
-                pass
-
-        print("rotate(with int args) " + str(rotate))
-
-        try:
-
-            #if type(arg1) is int:
-            #   rotate = arg1
-            if type(arg1) is str:
-                if arg1 in users:
-                    messages_from = arg1
-                else:
-                    title = arg1
-            #if type(arg2) is int:
-             #   rotate = arg2
-            if type(arg2) is str:
-                if arg2 in users:
-                    messages_from = arg2
-                else:
-                    title = arg2
-            #if type(arg3) is int:
-             #   rotate = arg3
-             if arg3 == None:
+        if
 
 
-                 if arg3 != None:
-                     if type(arg3) is str:
-                         if arg3 in users:
-                             messages_from = arg3
-                         else:
-                             title = arg3
-        except Exception:
-            pass
+        # deque stuff
+        # smaller deque to shuffle through
+        msg_deq = messages[:200]
+        channel = msg_chan # grabs channel to sort from
 
-        #if messages_from != none:
-            # needs to register if a username was provided, cycle through and only pick out those user messages
+        chan_deq = filter(function, msg_deq)
 
-        if title == None:
-            title = "messages"
-        if rotate == 0:
-             rotate = 1
-        i = rotate
+        if message.content.lower().find("usr:"):
+            # read in after prefix
 
-        print("argument 1: " + str(arg1))
-        print("argument 2: " + str(arg2))
-        print("argument 3: " + str(arg3))
+            usr_deq = filter(function, chan_deq)
 
-        print("rotate: " + str(rotate))
-        print("messages_from: " + str(messages_from))
-        print("title: " + str(title))
 
-        while i > 0:
-            messages.rotate(rotate)
-            usermessage = messages.pop()
-            write_the_dang_thing()
-            if i != 0:
-                x = rotate - 1
-                rotate = rotate * -1
-                messages.rotate(rotate)
-                rotate = x
-                messages.rotate(rotate)
-                i - 1
-            elif i == 0:
-                await bot.send_message(message.channel, "written to " + author + "'s scratchpad!")
+
+        # read in after usr
+        #if msg_content.startswith(usr_prefix):
+        #   for msg_content.lower().find(users):
+
+
+ #        await bot.send_message(message.channel, "written to " + author + "'s scratchpad!")
 
     if message.content.startswith(prefix + "help"):
         await bot.send_message(message.channel, "What command would you like help with?")
