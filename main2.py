@@ -165,10 +165,6 @@ async def on_message(message):
     helpmeh = help_meh()
     title = ""
 
-    global msg_content
-    global msg_author
-    global msg_chan
-
     msg_content = message.content
     msg_author = message.author.name.lower()
     msg_chan = message.channel
@@ -240,7 +236,7 @@ async def on_message(message):
     if message.content.startswith(prefix + "grab"): # checks for the trigger command
         user = ioMod.json_handler()         #user = ioMod.json_handler
         data = user.read_user(msg_author)   #data = user.read_user(0, author)
-        usr, title, num, result, result_from = [0, 0, 0, 0, 0]
+        usr, num, result, result_from = [0, 0, 0, 0]
         usr_pre = 'usr'
         title_pre = 'ti'
         num_pre = 'num'
@@ -253,19 +249,20 @@ async def on_message(message):
         print("arguments: " + str(msg_args))
 
         ## Functions ##
-        def write_the_dang_thing():
-            result = result_from
+        def write_msg(title, result_from):
             msgs = "messages"
             if num > 0:
                 i = num
                 while i > 0:
                     if title != msgs:
-                        data[title]["values"].insert(result) 
+                        data[title]["values"].insert(0, result_from)
+                        print(data)
+                        print(msg_author)
                         user.write_user(data, msg_author) # writes the file
                     else:
                         data["messages"].insert(result)
                         user.write_user(data, msg_author)
-                    i -= 1
+                        i -= 1
 
         def chan_cheq(input_arg): # sorts through messages from specific channels
             if input_arg.channel == channel:  #if the input message is the same as the channel you sent the trigger from,
@@ -274,38 +271,6 @@ async def on_message(message):
         def usr_cheq(input_arg): # sorts through specific users
             for usr in input_arg.author: # for the user inputted to copy from in the argument passed, return the message to copy
                 return input_arg
-
-        def get_ti():
-            title_place = msg_args.index('ti')
-            title_name = title_place + 1
-            title = msg_args[title_name].strip()
-            print(title)
-
-        def get_usr_num():
-            usr_place = msg_args.index('usr') # returns where usr is
-            usr_name = usr_place + 1  # gets position of username
-            usr = msg_args[usr_name].strip() # gets user to copy from
-            print(usr)
-            usr_deq = filter(usr_cheq, chan_deq) # filters deq with username to copy from
-            result_from = usr_deq
-            ## get number and finish the deal now ##
-            if num_pre in msg_args[0]:
-                num_place = msg_args.index('num') # finds number arg position
-                num_pos = num_place + 1 # gets actual number
-                num = msg_args[num_pos].strip()
-                print(int(num))
-            else:
-                num = 1
-                print(num)
-                write_the_dang_thing()
-            return
-
-        def get_num():
-                num_place = msg_args.index("num") # finds number arg position
-                num_pos = num_place + 1 # gets actual number
-                num = msg_args[num_pos].strip()
-                print(int(num))
-                result_from = chan_deq
 
         # smaller deque to shuffle through
         msg_deq = itertools.islice(messages, 0, 200) # makes deque 200 messages
@@ -316,13 +281,22 @@ async def on_message(message):
         try:
             if title_pre in msg_args[0]:  # title prefix is "ti"
                 msg_args = msg_args[0]
-                get_ti()
+                title_place = msg_args.index('ti')
+                title_name = title_place + 1
+                title = msg_args[title_name].strip()
+                print(title)
             elif title_pre in msg_args[1]:
                 msg_args = msg_args[1]
-                get_ti()
+                title_place = msg_args.index('ti')
+                title_name = title_place + 1
+                title = msg_args[title_name].strip()
+                print(title)
             elif title_pre in msg_args[2]:
                 msg_args = msg_args[2]
-                get_ti()
+                title_place = msg_args.index('ti')
+                title_name = title_place + 1
+                title = msg_args[title_name].strip()
+            print(title)
         except:
             if title == 0:
                 title = "messages"
@@ -331,34 +305,88 @@ async def on_message(message):
         try:
             if usr_pre in msg_args[0]:
                 msg_args = msg_args[0]
-                get_usr()
-                #get num
+                usr_place = msg_args.index('usr') # returns where usr is
+                usr_name = usr_place + 1  # gets position of username
+                usr = msg_args[usr_name].strip() # gets user to copy from
+                print(usr)
+                usr_deq = filter(usr_cheq, chan_deq) # filters deq with username to copy from
+                result_from = usr_deq
+                ## get number and finish the deal now ##
+                if num_pre in msg_args[0]:
+                    num_place = msg_args.index('num') # finds number arg position
+                    num_pos = num_place + 1 # gets actual number
+                    num = msg_args[num_pos].strip()
+                    print(int(num))
+                else:
+                    num = 1
+                    print(num)
+                    write_msg(title, result_from)
             elif usr_pre in msg_args[1]:
                 msg_args = msg_args[1]
-                get_usr()
+                usr_place = msg_args.index('usr') # returns where usr is
+                usr_name = usr_place + 1  # gets position of username
+                usr = msg_args[usr_name].strip() # gets user to copy from
+                print(usr)
+                usr_deq = filter(usr_cheq, chan_deq) # filters deq with username to copy from
+                result_from = usr_deq
+                ## get number and finish the deal now ##
+                if num_pre in msg_args[0]:
+                    num_place = msg_args.index('num') # finds number arg position
+                    num_pos = num_place + 1 # gets actual number
+                    num = msg_args[num_pos].strip()
+                    print(int(num))
+                else:
+                    num = 1
+                    print(num)
+                    write_msg(title, result_from)
             elif usr_pre in msg_args[2]:
                 msg_args = msg_args[2]
-                get_usr()
+                usr_place = msg_args.index('usr') # returns where usr is
+                usr_name = usr_place + 1  # gets position of username
+                usr = msg_args[usr_name].strip() # gets user to copy from
+                print(usr)
+                usr_deq = filter(usr_cheq, chan_deq) # filters deq with username to copy from
+                result_from = usr_deq
+                ## get number and finish the deal now ##
+                if num_pre in msg_args[0]:
+                    num_place = msg_args.index('num') # finds number arg position
+                    num_pos = num_place + 1 # gets actual number
+                    num = msg_args[num_pos].strip()
+                    print(int(num))
+                else:
+                    num = 1
+                    print(num)
+                    write_msg(title, result_from)
         except:
             pass
         ## GET NUMBER TO COPY##
         try:
             if num_pre in msg_args[0]:
                 msg_args = msg_args[0]
-                get_num()
-                print(num)
+                num_place = msg_args.index("num") # finds number arg position
+                num_pos = num_place + 1 # gets actual number
+                num = msg_args[num_pos].strip()
+                print(int(num))
+                result_from = chan_deq
             elif num_pre in msg_args[1]:
                 msg_args = msg_args[1]
-                get_num()
-                print(num)
+                num_place = msg_args.index("num") # finds number arg position
+                num_pos = num_place + 1 # gets actual number
+                num = msg_args[num_pos].strip()
+                print(int(num))
+                result_from = chan_deq
             elif num_pre in msg_args[2]:
                 msg_args = msg_args[2]
-                get_num()
+                num_place = msg_args.index("num") # finds number arg position
+                num_pos = num_place + 1 # gets actual number
+                num = msg_args[num_pos].strip()
+                print(int(num))
+                result_from = chan_deq
         except:
             num = 1
             print(num)
             result_from = chan_deq
-        write_the_dang_thing()
+        write_msg(title, result_from)
     await bot.send_message(msg_chan, "Saved to " + author + "'s scratchpad!")
 ########################################################################################################
 

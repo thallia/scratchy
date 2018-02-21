@@ -1,11 +1,7 @@
 {
-    "messages": [
-],
+    "messages": [],
     "python": {
         "title": "python",
         "desc": "Python learnings, code, and tidbits",
         "values": [
-            "python is gud"
-        ]
-    }
-}
+            
