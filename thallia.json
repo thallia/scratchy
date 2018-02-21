@@ -1,5 +1,9 @@
 {
     "messages": [
+        "@grab",
+        "@grab num:4",
+        "@grab ti:python",
+        "@grab"
     ],
     "python": {
         "title": "python",
