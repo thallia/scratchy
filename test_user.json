@@ -3,6 +3,9 @@
     "test": {
         "title": "test",
         "desc": "",
-        "values": []
+        "values": [
+            "Test 1, this should get deleted.",
+            "Test 2, this should remain"
+        ]
     }
 }

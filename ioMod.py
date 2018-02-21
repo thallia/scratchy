@@ -14,6 +14,25 @@ class json_handler():
     def foo_method(self, bar):
     	print(self.foo + bar)
     
+    def remove_entry(self, user, entry_name, value):
+        if entry_name == "messages":
+            return "You can't delete the `messages` list."
+
+        if os.path.isfile(user.lower() + ".json"):
+            # Do stuff
+            with open(user.lower() + ".json") as json_file:
+                data = json.load(json_file)
+                if entry_name in data and len(data[entry_name]["values"]) > value:
+                    string_at_value = data[entry_name]["values"][value]
+                    data[entry_name]["values"].remove(string_at_value)
+                    self.write_user(data, user.lower())
+                    return "Successfully removed '{}' from '{}'.".format(string_at_value, entry_name)
+                else:
+                    return "Unable to remove value, are you sure {} exists?".format(entry_name)
+
+        else:
+            return "ERR: User file doesn't have a scratchpad! Try running the `@new` command to automatically create a scratchpad."
+
     def new(self, user, entry_name):
         data_to_init = {
             "title": entry_name,
@@ -143,6 +162,8 @@ if __name__ == "__main__":
     print("-"*20)
     handle.new_file("test_user")
     handle.new("test_user", "test")
+    #remove_entry(user, entry_name, value):
+    print(handle.remove_entry("test_user", "test", 0))
     print("I'me at: " + handle.path_to_me)
 	
 
