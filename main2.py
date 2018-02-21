@@ -165,6 +165,10 @@ async def on_message(message):
     helpmeh = help_meh()
     title = ""
 
+    global msg_content
+    global msg_author
+    global msg_chan
+
     msg_content = message.content
     msg_author = message.author.name.lower()
     msg_chan = message.channel
