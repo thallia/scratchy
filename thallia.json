@@ -1,15 +1,7 @@
 {
-    "messages": [
-        "@grab",
-        "@grab num:4",
-        "@grab ti:python",
-        "@grab"
-    ],
+    "messages": [],
     "python": {
         "title": "python",
         "desc": "Python learnings, code, and tidbits",
         "values": [
-            "python is gud"
-        ]
-    }
-}
+            

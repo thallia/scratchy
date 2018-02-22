@@ -1,4 +1,5 @@
 import discord
+import random
 from discord.ext import commands
 import json
 import sys
@@ -6,6 +7,7 @@ import asyncio
 import ioMod
 import os
 from collections import deque
+from subprocess import check_output
 import helpMeh
 from helpMeh import help_meh
 import itertools
@@ -170,14 +172,9 @@ async def on_message(message):
     helpmeh = help_meh()
     title = ""
 
-    global msg_content
-    global msg_author
-    global msg_chan
-
     msg_content = message.content
     msg_author = message.author.name.lower()
     msg_chan = message.channel
-
 
     if message.author.name.lower() == "scratchy":   # prevents triggering of self
         return
@@ -207,7 +204,6 @@ async def on_message(message):
     if msg_content.startswith(prefix + "new"):
         message_args = msg_content.split(" ")
         arg1 = None
-
         try:
             arg1 = str(message_args[1].strip())
         except Exception as e:
@@ -217,11 +213,12 @@ async def on_message(message):
     
     #if msg_content.startswith(prefix + "remove"):
         #if len(msg_content.split(' ') >= 2):    # entry [values]
-
+    
+        
     if msg_content.startswith(prefix + "set"):
         # set <entry> <field> <value>
         if(len(msg_content.split(' ')) <= 3):
-            await bot.send_message(msg_chan, "Incorrect amount or setup of argruments. Try `@set <entry> <field> <value>`.")
+            await bot.send_message(msg_chan, "Incorrect amount or setup of arguments. Try `@set <entry> <field> <value>`.") # not argruments lol
             return;
 
         args = parse_args(msg_content.split(" ")[1:])
@@ -237,6 +234,13 @@ async def on_message(message):
         else:
             await bot.send_message(msg_chan, "Incorrect amount or setup of argruments. Try `@set <entry> <field> <value>`.")
 
+    if msg_content.startswith(prefix + "bytecode"):
+        me = check_output(["python3", "-m", "dis", os.getcwd() + "/" + __file__]).decode("utf-8")
+        r1 = random.randint(0, len(me))
+        r2 = random.randint(r1, len(me))
+        me = me[r1:r2]
+        await bot.send_message(message.channel, "```\n" + me + "```")
+
     if msg_content.startswith(prefix + "upload_scratch"):
         if os.path.isfile(msg_author + ".json"):
             await bot.send_message(msg_chan, "Uploading your scratchpad...")
@@ -247,96 +251,163 @@ async def on_message(message):
     if msg_content.startswith(prefix + "ping"): # For testing if I'm on.
         await bot.send_message(msg_chan, "Pong!")
 
+########################################################################################################
     if message.content.startswith(prefix + "grab"): # checks for the trigger command
         user = ioMod.json_handler()         #user = ioMod.json_handler
         data = user.read_user(msg_author)   #data = user.read_user(0, author)
-        usr, title, num, result, result_from = [0, 0, 0, 0, 0]
+        usr, num, result, result_from = [0, 0, 0, 0]
         usr_pre = 'usr'
         title_pre = 'ti'
         num_pre = 'num'
-        msg_args = msg_content.split(" ")
-        print("arguments: " + str(msg_args))
 
+        ## split messages ##
+        msg_args = msg_content.split(" ")
         for elem in msg_args:
             if elem.find(":") != -1:
                 msg_args[msg_args.index(elem)] = elem.split(":")
-
         print("arguments: " + str(msg_args))
 
-        def write_the_dang_thing():
-            result = result_from
+        ## Functions ##
+        def write_msg(title, result_from):
+            msgs = "messages"
             if num > 0:
                 i = num
                 while i > 0:
-                    if title in data:
-                        data[title].insert(0, msg_content) # inserts the message into the file
+                    if title != msgs:
+                        data[title]["values"].insert(0, result_from)
+                        print(data)
+                        print(msg_author)
                         user.write_user(data, msg_author) # writes the file
+                    else:
+                        data["messages"].insert(result)
+                        user.write_user(data, msg_author)
                         i -= 1
 
-        # smaller deque to shuffle through
-        msg_deq = itertools.islice(messages, 0, 200) # makes deque 200 messages
-
-        channel = msg_chan # grabs channel to sort from (chan you sent trigger from)
-
         def chan_cheq(input_arg): # sorts through messages from specific channels
-            if input_arg.channel == channel:  #if the input message is the same as the channel you sent the trigger from, return only those messages
-                return input_arg
+            if input_arg.channel == channel:  #if the input message is the same as the channel you sent the trigger from,
+                return input_arg              # return only those messages
 
         def usr_cheq(input_arg): # sorts through specific users
             for usr in input_arg.author: # for the user inputted to copy from in the argument passed, return the message to copy
                 return input_arg
 
+        # smaller deque to shuffle through
+        msg_deq = itertools.islice(messages, 0, 200) # makes deque 200 messages
         chan_deq = filter(chan_cheq, msg_deq) # filters out specific channel to grab from in the deq
+        channel = msg_chan # grabs channel to sort from (chan you sent trigger from)
 
-        if title_pre in msg_args:  # title prefix is "ti"
-            title_place = msg_args.index("ti")
-            title_name = title_place + 1
-            title = msg_args[title_name].strip()
+        ## GET TITLE ## if specified
+        try:
+            if title_pre in msg_args[0]:  # title prefix is "ti"
+                msg_args = msg_args[0]
+                title_place = msg_args.index('ti')
+                title_name = title_place + 1
+                title = msg_args[title_name].strip()
+                print(title)
+            elif title_pre in msg_args[1]:
+                msg_args = msg_args[1]
+                title_place = msg_args.index('ti')
+                title_name = title_place + 1
+                title = msg_args[title_name].strip()
+                print(title)
+            elif title_pre in msg_args[2]:
+                msg_args = msg_args[2]
+                title_place = msg_args.index('ti')
+                title_name = title_place + 1
+                title = msg_args[title_name].strip()
             print(title)
-
+        except:
             if title == 0:
                 title = "messages"
                 print(title)
-
-
-        if usr_pre in msg_args:
-            usr_place = msg_args.index("usr") # returns where usr is
-            usr_name = usr_place + 1  # gets position of username
-            usr = msg_args[usr_name].strip() # gets user to copy from
-            print(usr)
-            usr_deq = filter(usr_cheq, chan_deq) # filters deq with username to copy from
-            result_from = usr_deq
-
-            if num_pre in msg_args:
+        ## GET USER ## if specified
+        try:
+            if usr_pre in msg_args[0]:
+                msg_args = msg_args[0]
+                usr_place = msg_args.index('usr') # returns where usr is
+                usr_name = usr_place + 1  # gets position of username
+                usr = msg_args[usr_name].strip() # gets user to copy from
+                print(usr)
+                usr_deq = filter(usr_cheq, chan_deq) # filters deq with username to copy from
+                result_from = usr_deq
+                ## get number and finish the deal now ##
+                if num_pre in msg_args[0]:
+                    num_place = msg_args.index('num') # finds number arg position
+                    num_pos = num_place + 1 # gets actual number
+                    num = msg_args[num_pos].strip()
+                    print(int(num))
+                else:
+                    num = 1
+                    print(num)
+                    write_msg(title, result_from)
+            elif usr_pre in msg_args[1]:
+                msg_args = msg_args[1]
+                usr_place = msg_args.index('usr') # returns where usr is
+                usr_name = usr_place + 1  # gets position of username
+                usr = msg_args[usr_name].strip() # gets user to copy from
+                print(usr)
+                usr_deq = filter(usr_cheq, chan_deq) # filters deq with username to copy from
+                result_from = usr_deq
+                ## get number and finish the deal now ##
+                if num_pre in msg_args[0]:
+                    num_place = msg_args.index('num') # finds number arg position
+                    num_pos = num_place + 1 # gets actual number
+                    num = msg_args[num_pos].strip()
+                    print(int(num))
+                else:
+                    num = 1
+                    print(num)
+                    write_msg(title, result_from)
+            elif usr_pre in msg_args[2]:
+                msg_args = msg_args[2]
+                usr_place = msg_args.index('usr') # returns where usr is
+                usr_name = usr_place + 1  # gets position of username
+                usr = msg_args[usr_name].strip() # gets user to copy from
+                print(usr)
+                usr_deq = filter(usr_cheq, chan_deq) # filters deq with username to copy from
+                result_from = usr_deq
+                ## get number and finish the deal now ##
+                if num_pre in msg_args[0]:
+                    num_place = msg_args.index('num') # finds number arg position
+                    num_pos = num_place + 1 # gets actual number
+                    num = msg_args[num_pos].strip()
+                    print(int(num))
+                else:
+                    num = 1
+                    print(num)
+                    write_msg(title, result_from)
+        except:
+            pass
+        ## GET NUMBER TO COPY##
+        try:
+            if num_pre in msg_args[0]:
+                msg_args = msg_args[0]
                 num_place = msg_args.index("num") # finds number arg position
                 num_pos = num_place + 1 # gets actual number
                 num = msg_args[num_pos].strip()
                 print(int(num))
-            else:
-                num = 1
-                print(num)
-                write_the_dang_thing()
-                await bot.send_message(msg_chan, "Saved to " + author + "'s scratchpad!")
-                return
-
-        elif num_pre in msg_args: # copied bc if no user, can't pull from usr_deq
-            num_place = msg_args.index("num") # finds number arg position
-            num_pos = num_place + 1 # gets actual number
-            num = msg_args[num_pos].strip()
-            print(int(num))
-            result_from = chan_deq
-        else:
+                result_from = chan_deq
+            elif num_pre in msg_args[1]:
+                msg_args = msg_args[1]
+                num_place = msg_args.index("num") # finds number arg position
+                num_pos = num_place + 1 # gets actual number
+                num = msg_args[num_pos].strip()
+                print(int(num))
+                result_from = chan_deq
+            elif num_pre in msg_args[2]:
+                msg_args = msg_args[2]
+                num_place = msg_args.index("num") # finds number arg position
+                num_pos = num_place + 1 # gets actual number
+                num = msg_args[num_pos].strip()
+                print(int(num))
+                result_from = chan_deq
+        except:
             num = 1
             print(num)
             result_from = chan_deq
-        write_the_dang_thing()
-        await bot.send_message(msg_chan, "Saved to " + author + "'s scratchpad!")
-
-    if message.content.startswith(prefix + "help"):
-        await bot.send_message(message.channel, "What command would you like help with?")
-        #if message.content.lower().find("grab") !=-1:
-        print(helpmeh.with_grab())
-        #await bot.send_message(message.channel, "test")
+        write_msg(title, result_from)
+    await bot.send_message(msg_chan, "Saved to " + author + "'s scratchpad!")
+########################################################################################################
 
 def got_stdin_data(q): # Get input.
     asyncio.async(q.put(sys.stdin.readline()))
@@ -355,7 +426,5 @@ except KeyboardInterrupt:
         pass;
 
 loop.close()
-
-#bot.run(token)
 
 bot.run(token)
