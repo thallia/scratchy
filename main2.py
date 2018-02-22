@@ -42,6 +42,11 @@ def find_quote(msg_list, index = 0):
         print(x)
         if x.find('"') != -1:
             return msg_list.index(x)
+
+def rm(entry_name, value):
+    handler = ioMod.json_handler()
+    return handler.remove_entry(msg_author, entry_name, value)
+
 def set_entry(args, data = None):
     # set <entry> <field> <value>
     
@@ -209,6 +214,9 @@ async def on_message(message):
             await bot.send_message(msg_chan, "Err: Unable to parse args. Are you using `new <entry_name>`?") # Report error
             return
 
+    
+    #if msg_content.startswith(prefix + "remove"):
+        #if len(msg_content.split(' ') >= 2):    # entry [values]
 
     if msg_content.startswith(prefix + "set"):
         # set <entry> <field> <value>
