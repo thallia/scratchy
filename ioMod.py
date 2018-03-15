@@ -6,21 +6,29 @@ from shutil import copyfile
 
 ## module for handling IO for the scratchy discord bot
 class json_handler():
-    def __init__(self):
-        self.foo = "Hello,"
-        self.path_to_me = os.getcwd()
-        self.backup_folder = self.path_to_me + "/backups/"
+    foo = "Hello "
+    path_to_me = os.getcwd()
+    backup_folder = path_to_me + "/backups/"
+    data_folder = path_to_me + "/data/"
     ## Demonstrate using self values in other places
+
+    def verify_file(self, f):
+        if not os.path.isfile(fp): 
+            print("ERROR: ioMod: '" + user.lower() + ".json' doesn't exist.")
+            return False;
+        else:
+            return True;
+
     def foo_method(self, bar):
     	print(self.foo + bar)
-    
+
     def remove_entry(self, user, entry_name, value):
         if entry_name == "messages":
             return "You can't delete the `messages` list."
 
         if os.path.isfile(user.lower() + ".json"):
             # Do stuff
-            with open(user.lower() + ".json") as json_file:
+            with open(self.data_folder + user.lower() + ".json") as json_file:
                 data = json.load(json_file)
                 if entry_name in data and len(data[entry_name]["values"]) > value:
                     string_at_value = data[entry_name]["values"][value]
@@ -40,16 +48,16 @@ class json_handler():
             "values": []
         }
         
-        if os.path.isfile(user.lower() + ".json"): 
+        if os.path.isfile(self.data_folder + user.lower() + ".json"): 
             data = None
-            with open(user.lower() + ".json", "r") as json_file:
+            with open(self.data_folder + user.lower() + ".json", "r") as json_file:
                 data = json.load(json_file)
                 if entry_name not in data:
                     data[entry_name] = data_to_init
                 else:
                     print("ERROR: ioMod: '" + entry_name + "' already in file")
 
-            with open(user.lower() + ".json", "w") as json_file:
+            with open(self.data_folder + user.lower() + ".json", "w") as json_file:
                 if data != None:
                     json.dump(data, json_file, indent=4)            
                     self.make_backup()
@@ -62,8 +70,8 @@ class json_handler():
             "messages": [],
         }
 
-        if fp == None and not os.path.isfile(user.lower() + ".json"): # if not a special file and if file does not exist
-            with open(user.lower() + ".json", "w+") as json_file:
+        if fp == None and not os.path.isfile(self.data_folder + user.lower() + ".json"): # if not a special file and if file does not exist
+            with open(self.data_folder + user.lower() + ".json", "w+") as json_file:
                 json.dump(data_to_init, json_file, indent=4)
                 print("populated " + user.lower() + ".json")
         else:
@@ -72,19 +80,17 @@ class json_handler():
 
             
     def read(self, fp):
-        if not os.path.isfile(fp): 
-            print("ERROR: ioMod: '" + user.lower() + ".json' doesn't exist.")
-            return None;
+        self.verify_file(fp)
 
         with open(fp) as json_file:
     	    return json.load(json_file)
     
     def read_user(self, fp):
-        if not os.path.isfile(fp + ".json"):
+        if not os.path.isfile(self.data_folder + fp + ".json"):
             print("ERROR: ioMod: '" + user.lower() + ".json' doesn't exist.")
             return None;
 
-        with open(fp + ".json") as json_file:
+        with open(self.data_folder + fp + ".json") as json_file:
     	    return json.load(json_file)
 
     def write(self, obj, fp):
@@ -96,11 +102,11 @@ class json_handler():
     	    return json.dump(obj, json_file, indent=4)
 	
     def write_user(self, obj, fp):
-        if not os.path.isfile(fp + ".json"):
+        if not os.path.isfile(self.data_folder + fp + ".json"):
             print("ERROR: ioMod: '" + user.lower() + ".json' doesn't exist.")
             return;
 	
-        with open(fp + ".json", 'w') as json_file:
+        with open(self.data_folder + fp + ".json", 'w') as json_file:
     	    return json.dump(obj, json_file, indent=4)
 
     def make_backup(self, files=None):
@@ -164,6 +170,6 @@ if __name__ == "__main__":
     handle.new("test_user", "test")
     #remove_entry(user, entry_name, value):
     print(handle.remove_entry("test_user", "test", 0))
-    print("I'me at: " + handle.path_to_me)
+    print("I'm at: " + handle.path_to_me)
 	
 
